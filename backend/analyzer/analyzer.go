@@ -18,12 +18,15 @@ func Analyzer(input string) (interface{}, error) {
 		return nil, errors.New("no se proporcionó ningún comando")
 	}
 
+	comando := strings.ToLower(tokens[0]) //Convertimos a minisculas el comando
 	// Switch para manejar diferentes comandos
-	switch tokens[0] { //Toma la primera posicion de la entrada
+	switch comando { //Toma la primera posicion de la entrada
 	case "mkdisk":
 		// Llama a la función Mkdir del paquete commands con los argumentos restantes
 		return comandos.ParseMkdisk(tokens[1:])
-
+	case "rmdisk":
+		// Llama a la función Mkdir del paquete commands con los argumentos restantes
+		return comandos.ParseMkdisk(tokens[1:])
 	default:
 		// Si el comando no es reconocido, devuelve un error
 		return nil, fmt.Errorf("comando desconocido: %s", tokens[0])

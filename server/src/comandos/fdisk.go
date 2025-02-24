@@ -130,6 +130,7 @@ func ParseFdisk(tokens []string) (*FDISK, error) {
 	err := commandFdisk(cmd)
 	if err != nil {
 		fmt.Println("Error:", err)
+		return cmd, err
 	}
 
 	return cmd, nil // Devuelve el comando FDISK creado
@@ -152,6 +153,11 @@ func commandFdisk(fdisk *FDISK) error {
 		}
 	} else if fdisk.typ == "E" {
 		fmt.Println("Creando partición extendida...") // Les toca a ustedes implementar la partición extendida
+		err = createExtendidaPartition(fdisk, sizeBytes)
+		if err != nil {
+			fmt.Println("Error creando partición extendida:", err)
+			return err
+		}
 	} else if fdisk.typ == "L" {
 		fmt.Println("Creando partición lógica...") // Les toca a ustedes implementar la partición lógica
 	}
@@ -159,6 +165,7 @@ func commandFdisk(fdisk *FDISK) error {
 	return nil
 }
 
+// -------------------------------------------------------------Particion Primaria--------------------------------------------------------------
 // Creacion de particiones primarias
 func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 	// Crear una instancia de MBR
@@ -187,8 +194,10 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 	Part_correlative int32    // Correlativo de la partición
 	Part_id          [4]byte  // ID de la partición */
 	availablePartition, startPartition, indexPartition := mbr.GetFirstAvailablePartition() //*PARTITION, int, int   (Retornos)
+	var err2 error
+	err2 = nil
 	if availablePartition == nil {
-		fmt.Println("No hay particiones disponibles o la particion es mas grande que el disco")
+		err2 = errors.New("no hay particiones disponibles o la particion es mas grande que el disco")
 	}
 
 	//Se comprueba si existe otra particion con el mismo nombre
@@ -217,6 +226,103 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 
 	// Serializar el MBR en el archivo binario
 	err = mbr.SerializeMBR(fdisk.path)
+	if err != nil {
+		fmt.Println("Error:", err)
+		err2 = err //En caso de que ocura un error se retorna
+	}
+
+	return err2 //Si no ocurrio ningun error se retorna nil
+}
+
+// -------------------------------------------------------------Particion Extendida--------------------------------------------------------------
+// Creacion de particiones primarias
+func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
+	// Crear una instancia de MBR
+	var mbr structures.MBR
+
+	// Deserializar la estructura MBR desde un archivo binario
+	err := mbr.DeserializeMBR(fdisk.path)
+	if err != nil {
+		fmt.Println("Error deserializando el MBR:", err)
+		return err
+	}
+
+	/* SOLO PARA VERIFICACIÓN */
+	// Imprimir MBR
+	fmt.Println("\n--MBR original--")
+	mbr.PrintMBR()
+
+	// Obtener la primera partición disponible
+	/*PARTITION:
+	  Part_status      [1]byte  // Estado de la partición
+	  Part_type        [1]byte  // Tipo de partición
+	  Part_fit         [1]byte  // Ajuste de la partición
+	  Part_start       int32    // Byte de inicio de la partición
+	  Part_size        int32    // Tamaño de la partición
+	  Part_name        [16]byte // Nombre de la partición
+	  Part_correlative int32    // Correlativo de la partición
+	  Part_id          [4]byte  // ID de la partición */
+	availablePartition, startPartition, indexPartition := mbr.GetFirstAvailablePartition() //*PARTITION, int, int   (Retornos)
+	var err2 error
+	err2 = nil
+	if availablePartition == nil {
+		err2 = errors.New("no hay particiones disponibles o la particion es mas grande que el disco")
+	}
+
+	//Validar si existe otra paricion extendida(Solo puede aver una)
+	validacion_extendida := mbr.GetExtendedPartition()
+	if validacion_extendida {
+		err2 = errors.New("solo puede existir una partricion extendida dentro del disco")
+	}
+
+	// Se comprueba si existe otra particion con el mismo nombre
+	if mbr.ExisteNombre(fdisk.name) && availablePartition != nil && startPartition != -1 && !validacion_extendida {
+		/* SOLO PARA VERIFICACIÓN */
+		// Print para verificar que la partición esté disponible
+		//fmt.Println("\n--Partición disponible--")
+		//availablePartition.PrintPartition()
+
+		var corre = mbr.GetCorrelativo()
+
+		// Crear la partición con los parámetros proporcionados
+		availablePartition.CreatePartition(startPartition, sizeBytes, fdisk.typ, fdisk.fit, fdisk.name, corre)
+
+		// Print para verificar que la partición se haya creado correctamente
+		//fmt.Println("\n--Partición creada (modificada)--")
+		//availablePartition.PrintPartition()
+
+		// Se cambio el puntero de las particiones a las actuales
+		mbr.Mbr_partitions[indexPartition] = *availablePartition
+
+		// Imprimir las particiones del MBR
+		fmt.Println("\n--Particiones del MBR--")
+		mbr.PrintPartitions()
+	}
+
+	// Serializar el MBR en el archivo binario
+	err = mbr.SerializeMBR(fdisk.path)
+	if err != nil {
+		fmt.Println("Error:", err)
+		err2 = err //En caso de que ocura un error se retorna
+	}
+
+	return err2 //Si no ocurrio ningun error se retorna nil
+}
+
+// Se crea el EBR dentro de la particion
+func createEBR(fdisk *FDISK, sizeBytes int) error {
+	// Crear el EBR con los valores proporcionados
+	ebr := &structures.EBR{
+		Ebr_mount: [1]byte{'N'},
+		Ebr_fit:   [1]byte{'N'},
+		Ebr_start: int32(-1),
+		Ebr_size:  int32(-1),
+		Ebr_next:  int32(-1),
+		Ebr_name:  [16]byte{'N'},
+	}
+
+	// Serializar el EBR en el archivo
+	err := ebr.SerializeEBR(fdisk.path)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}

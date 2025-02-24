@@ -5,8 +5,8 @@ const AreadeTexto2 = ({ responseContent }) => {
     return (
         <Editor
             height="600px"
-            width="710px"
-            language="java"
+            width="1400px"
+            language="Batch"
             value={responseContent}
             theme="vs-dark"
             options={{ readOnly: true, minimap: { enabled: false } }}

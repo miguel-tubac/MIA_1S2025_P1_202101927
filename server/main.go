@@ -32,18 +32,43 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error al procesar la solicitud", http.StatusBadRequest)
 		return
 	}
+	//fmt.Println(requestData.Entrada)
+	cmd, errs := analyzer.Analyzer(requestData.Entrada)
 
-	cmd, err := analyzer.Analyzer(requestData.Entrada)
-	if err != nil {
-		log.Println("Error al analizar la entrada:", err)
-		response := ResponseData{Consola: "", TablaError: []string{err.Error()}}
+	// Si hay errores, procesamos el slice de errores
+	/*if len(errs) > 0 {
+		log.Println("Error al analizar la entrada:")
+		var errorStrings []string
+		for _, err := range errs {
+			errorStrings = append(errorStrings, err.Error()) // Convertimos cada error a string
+		}
+
+		response := ResponseData{
+			Consola:    "",
+			TablaError: errorStrings,
+		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 		return
+	}*/
+	//Se recorre el []error para obtener la respuesta
+	var resultErrors string
+	if len(errs) > 0 {
+		for _, err := range errs {
+			//errorStrings = append(errorStrings, err.Error()) // Convertimos cada error a string
+			resultErrors += err.Error()
+		}
 	}
 
+	//Se recorre el []interface{} para obtener la respuesta
+	var resultStr string
+	for _, item := range cmd {
+		resultStr += fmt.Sprintf("%+v \n", item)
+	}
+	//Se unen los erroes al final
+	resultStr += resultErrors
 	response := ResponseData{
-		Consola:    fmt.Sprintf("Parsed Command: %+v", cmd),
+		Consola:    fmt.Sprintf("Parsed Command: %s", resultStr),
 		TablaError: []string{},
 	}
 

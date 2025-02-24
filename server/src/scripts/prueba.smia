@@ -1,0 +1,11 @@
+#-------------------------------------------Creacion del disco------------------------------------------------------
+#Este es un primer ejemplo
+#Eliminamos si ya existen los discos
+rMdisk -PatH="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Discoejem.mia"
+rmdisk -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
+
+mkdisk -size=5 -unit=M -fit=WF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Discoejem.mia"
+mkdisk -size=3000 -unit=K -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
+
+fdisk -Size=300 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -name=Particion1
+fdisk -Size=300 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -name=Particion2

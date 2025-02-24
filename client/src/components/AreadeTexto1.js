@@ -16,8 +16,8 @@ const AreadeTexto1 = ({ fileContent, setFileContent }) => {
     return (
         <Editor
             height="600px"
-            width="770px"
-            language="java"
+            width="1400px"
+            language="Batch"
             value={textValue}
             onChange={handleEditorChange}
             theme="vs-dark" // Puedes cambiar el tema aquí

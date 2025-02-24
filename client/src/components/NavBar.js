@@ -1,14 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
 import AreadeTexto1 from './AreadeTexto1';
 import AreadeTexto2 from './AreadeTexto2';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const fileInputRef = useRef(null);
   const [fileContent, setFileContent] = useState('');
   const [responseContent, setResponseContent] = useState('');
   const [errorList, setErrorList] = useState([]);
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   // Efecto para cargar el estado desde localStorage
   useEffect(() => {
@@ -40,7 +40,7 @@ const NavBar = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file && file.name.endsWith('.ci')) {
+    if (file && file.name.endsWith('.smia')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target.result;
@@ -48,7 +48,7 @@ const NavBar = () => {
       };
       reader.readAsText(file);
     } else {
-      console.log('Por favor selecciona un archivo con extensión .ci');
+      console.log('Por favor selecciona un archivo con extensión .smia');
     }
   };
 
@@ -56,9 +56,6 @@ const NavBar = () => {
     sendDataToBackend(fileContent);
   };
 
-  const handleErrorsButtonClick = () => {
-    navigate('/errores', { state: { errores: errorList } });
-  };
 
   const sendDataToBackend = (data) => {
     const backendUrl = 'http://localhost:4000/interpretar';
@@ -96,25 +93,16 @@ const NavBar = () => {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".ci"
+          accept=".smia"
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
         <button style={{ marginRight: '20px' }} onClick={handleExecuteButtonClick}>
           Ejecutar
         </button>
-        <button style={{ marginRight: '20px' }} onClick={handleErrorsButtonClick}>
-          Tabla Errores
-        </button>
-        <button style={{ marginRight: '20px' }}>
-          Tabla Simbolos
-        </button>
-        <button style={{ marginRight: '20px' }}>
-          Generar AST
-        </button>
       </nav>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <AreadeTexto1 fileContent={fileContent} setFileContent={setFileContent} />
         <AreadeTexto2 responseContent={responseContent} />
       </div>

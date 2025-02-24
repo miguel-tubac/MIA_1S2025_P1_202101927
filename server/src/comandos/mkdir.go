@@ -114,6 +114,7 @@ func ParseMkdisk(tokens []string) (*MKDISK, error) {
 	err := commandMkdisk(cmd)
 	if err != nil {
 		fmt.Println("Error:", err)
+		return nil, err
 	}
 
 	return cmd, nil // Devuelve el comando MKDISK creado

@@ -1,3 +1,4 @@
+#-------------------------------------------Creacion del disco------------------------------------------------------
 #Este es un primer ejemplo
 mkdisk -size=5 -unit=M -fit=WF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Discoejem.mia"
 
@@ -10,5 +11,24 @@ que la ruta no tiene ningún espacio en blanco
 mkdisk -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco2.mia -Unit=K -size=3000
 
 #Creará un disco de 10 Mb ya que no hay parámetro unit
-mkdisk -size=10 -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco4.mia"
+mkdisk -size=10 -pAth="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco4.mia"
 
+
+
+
+#----------------------------------------------Comando para eliminar el disco--------------------------------------
+#Comandos aseptados:
+rMdisk -PatH="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco4.mia"
+
+#Sin comillas:
+rmdisk -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco1.mia
+
+
+
+#---------------------------------------------Comandos para crear las particiones----------------------------------
+fdisk -Size=300 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco1.mia -name=Particion1
+fdisk -Size=300 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco1.mia -name=Particion2
+fdisk -Size=300 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco1.mia -name=Particion3
+fdisk -Size=300 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco1.mia -name=Particion4
+
+fdisk -Size=300 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/backend/discos/Disco1.mia -name=Particion5

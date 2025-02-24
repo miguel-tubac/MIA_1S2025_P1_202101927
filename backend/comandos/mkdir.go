@@ -24,20 +24,11 @@ type MKDISK struct {
 	path string // Ruta del archivo del disco
 }
 
-// Definición de errores comunes
-var (
-	ErrEmptyPath     = errors.New("la ruta no puede estar vacía")            // Error si el path está vacío
-	ErrPathRequired  = errors.New("el parámetro -path es obligatorio")       // Error si no se proporciona un path
-	ErrInvalidFormat = "formato inválido: %s (debe ser -param=valor)"        // Error si el formato del parámetro es incorrecto
-	ErrUnknownParam  = "parámetro desconocido: %s"                           // Error si se proporciona un parámetro no reconocido
-	ErrSpacesInPath  = "la ruta sin comillas no puede contener espacios: %s" // Error si el path tiene espacios y no está entre comillas
-)
-
 /*
    mkdisk -size=3000 -unit=K -path=/home/user/Disco1.mia
    mkdisk -size=3000 -path=/home/user/Disco1.mia
    mkdisk -size=5 -unit=M -fit=WF -path="/home/keviin/University/PRACTICAS/MIA_LAB_S2_2024/CLASE03/disks/Disco1.mia"
-   mkdisk -size=10 -path="/home/mis discos/Disco4.mia"
+   mkdisk -Size=10 -path="/home/mis discos/Disco4.mia"
 */
 
 func ParseMkdisk(tokens []string) (*MKDISK, error) {
@@ -48,7 +39,7 @@ func ParseMkdisk(tokens []string) (*MKDISK, error) {
 	//args = strings.ToLower(args)
 	//fmt.Println(args)
 	// Expresión regular para encontrar los parámetros del comando mkdisk
-	re := regexp.MustCompile(`-size=\d+|-unit=[kKmM]|-fit=[bBfFwW]{2}|-path="[^"]+"|-path=[^\s]+`)
+	re := regexp.MustCompile(`-(?i:size=\d+|unit=[kKmM]|fit=[bBfFwW]{2}|path="[^"]+"|path=[^\s]+)`)
 	// Encuentra todas las coincidencias de la expresión regular en la cadena de argumentos
 	matches := re.FindAllString(args, -1)
 

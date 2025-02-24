@@ -6,6 +6,8 @@ import (
 
 func ConvertToBytes(size int, unit string) (int, error) {
 	switch unit {
+	case "B":
+		return size, nil //Solo son los Bytes
 	case "K":
 		return size * 1024, nil // Convierte kilobytes a bytes
 	case "M":

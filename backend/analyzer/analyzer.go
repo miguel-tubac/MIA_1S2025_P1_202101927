@@ -28,7 +28,7 @@ func Analyzer(input string) (interface{}, error) {
 		// Llama a la función de eliminar disco
 		return comandos.Eliminar_Disco(tokens[1:])
 	case "fdisk":
-		return comandos.Eliminar_Disco(tokens[1:])
+		return comandos.ParseFdisk(tokens[1:])
 	default:
 		// Si el comando no es reconocido, devuelve un error
 		return nil, fmt.Errorf("comando desconocido: %s", tokens[0])

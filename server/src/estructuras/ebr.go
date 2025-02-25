@@ -17,12 +17,18 @@ type EBR struct {
 }
 
 // SerializeMBR escribe la estructura MBR al inicio de un archivo binario
-func (ebr *EBR) SerializeEBR(path string) error {
+func (ebr *EBR) SerializeEBR(path string, position int32) error {
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
+
+	// Mover el puntero de escritura a la posición deseada
+	_, err = file.Seek(int64(position), 0)
+	if err != nil {
+		return err
+	}
 
 	// Serializar la estructura MBR directamente en el archivo
 	err = binary.Write(file, binary.LittleEndian, ebr)

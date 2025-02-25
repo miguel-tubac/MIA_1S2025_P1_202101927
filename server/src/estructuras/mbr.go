@@ -172,3 +172,19 @@ func (mbr *MBR) GetCorrelativo() int32 {
 	}
 	return corr //Rernamos el ultimo valor o -1 si no hay ninguno
 }
+
+// Funcion para revisar si ya existe una particion extendida
+func (mbr *MBR) GetExtendedPartition() bool {
+	// Recorrer las particiones del MBR
+	for _, partition := range mbr.Mbr_partitions {
+		// Convertir Part_name a string y eliminar los caracteres nulos
+		partitionType := strings.Trim(string(partition.Part_fit[:]), "\x00 ")
+
+		// Si el nombre de la partición coincide, devolver la partición y el índice
+		if strings.EqualFold(partitionType, "E") {
+			fmt.Println("Ya existe una particion extendida")
+			return true
+		}
+	}
+	return false
+}

@@ -158,6 +158,11 @@ func commandFdisk(fdisk *FDISK) error {
 			fmt.Println("Error creando partición extendida:", err)
 			return err
 		}
+		err2 := createEBR(fdisk, sizeBytes)
+		if err2 != nil {
+			fmt.Println("Error creando el EBR:", err2)
+			return err2
+		}
 	} else if fdisk.typ == "L" {
 		fmt.Println("Creando partición lógica...") // Les toca a ustedes implementar la partición lógica
 	}
@@ -311,6 +316,18 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 
 // Se crea el EBR dentro de la particion
 func createEBR(fdisk *FDISK, sizeBytes int) error {
+	// Crear una instancia de MBR
+	var mbr structures.MBR
+
+	// Deserializar la estructura MBR desde un archivo binario
+	err := mbr.DeserializeMBR(fdisk.path)
+	if err != nil {
+		fmt.Println("Error deserializando el MBR:", err)
+		return err
+	}
+
+	paricion, _ := mbr.GetPartitionByName(fdisk.name)
+
 	// Crear el EBR con los valores proporcionados
 	ebr := &structures.EBR{
 		Ebr_mount: [1]byte{'N'},
@@ -322,9 +339,10 @@ func createEBR(fdisk *FDISK, sizeBytes int) error {
 	}
 
 	// Serializar el EBR en el archivo
-	err := ebr.SerializeEBR(fdisk.path)
-	if err != nil {
-		fmt.Println("Error:", err)
+	err2 := ebr.SerializeEBR(fdisk.path, paricion.Part_start) //Se le manda en que posicion se debe de agregar el EBR
+	if err2 != nil {
+		fmt.Println("Error:", err2)
+		return err2
 	}
 
 	return nil

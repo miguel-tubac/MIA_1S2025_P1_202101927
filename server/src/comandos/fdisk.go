@@ -165,6 +165,11 @@ func commandFdisk(fdisk *FDISK) error {
 		}
 	} else if fdisk.typ == "L" {
 		fmt.Println("Creando partición lógica...") // Les toca a ustedes implementar la partición lógica
+		err = createLogicPartition(fdisk, sizeBytes)
+		if err != nil {
+			fmt.Println("Error agregando la particion Logica:", err)
+			return err
+		}
 	}
 
 	return nil
@@ -346,4 +351,111 @@ func createEBR(fdisk *FDISK, sizeBytes int) error {
 	}
 
 	return nil
+}
+
+// -------------------------------------------------------------Particion Logica--------------------------------------------------------------
+//  1. Obtenermos la particion extendida
+//  2. Obtenemos el start de la extendida
+//  3. Deserealizamos el EBR con el ofset del start
+//     Funcion Recursuiva:
+//  4. Comprobamos que la propiedad NEXT del EBR sea -1 (se agrega la informacion del EBR logico)
+//  5. SI NEXT != -1 se accede al sigueinte EBR y se vuelve a evaluar
+func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
+	// Crear una instancia de MBR
+	var mbr structures.MBR
+
+	// Deserializar la estructura MBR desde un archivo binario
+	err := mbr.DeserializeMBR(fdisk.path)
+	if err != nil {
+		fmt.Println("Error deserializando el MBR:", err)
+		return err
+	}
+
+	/* SOLO PARA VERIFICACIÓN */
+	// Imprimir MBR
+	fmt.Println("\n--MBR original--")
+	mbr.PrintMBR()
+
+	//Validar si existe la particion extendida
+	var err2 error
+	err2 = nil
+	validacion_extendida := mbr.GetExtendedPartition()
+	//fmt.Println(validacion_extendida)
+	if validacion_extendida {
+		//obtenemos la particion
+		particion := mbr.GetExtendedPartition2()
+
+		//Obtenemos el objeto EBR deserealizandolo del dico
+		var ebr structures.EBR
+		//fmt.Println("Aqui Miguel:")
+		//fmt.Println(particion.Part_start)                           //Objeto donde se deserealizara el ebr
+		err2 = ebr.DeserializeEBR(fdisk.path, particion.Part_start) //Se deserealiza el primer EBR de la extendida
+		if err2 != nil {
+			fmt.Println("Error deserializando el EBR:", err2)
+			return err2
+		}
+
+		//Imprimimos el EBR para verificar
+		fmt.Println("\n--EBR original--")
+		ebr.PrintEBR()
+
+		//Devolver el start tomando en cuenta el valor de Bytes del EBR
+		starPartition := ebr.BuscarEBRDisponible(fdisk.path, particion.Part_start)
+
+		// Seleccionar el tipo de ajuste
+		var fitByte byte
+		switch fdisk.fit {
+		case "FF":
+			fitByte = 'F'
+		case "BF":
+			fitByte = 'B'
+		case "WF":
+			fitByte = 'W'
+		default:
+			fmt.Println("Invalid fit type")
+			return nil
+		}
+		ebr.CreateLogical(fitByte, int32(starPartition), fdisk.size, fdisk.name)
+
+		/*
+			Ebr_mount [1]byte  // Indica si la partición está montada o no
+			Ebr_fit   [1]byte  // Tipo de ajuste de la partición. Tendrá los valores B (Best), F(First) o W (worst)
+			Ebr_start int32    // Indica en qué byte del disco inicia la partición
+			Ebr_size  int32    // Contiene el tamaño total de la partición en bytes.
+			Ebr_next  int32    // Byte en el que está el próximo EBR. -1 si no hay siguiente
+			Ebr_name  [16]byte //Nombre de la partición*/
+	}
+
+	// Se comprueba si existe otra particion con el mismo nombre
+	/*if mbr.ExisteNombre(fdisk.name) && availablePartition != nil && startPartition != -1 && !validacion_extendida {
+		// SOLO PARA VERIFICACIÓN
+		// Print para verificar que la partición esté disponible
+		//fmt.Println("\n--Partición disponible--")
+		//availablePartition.PrintPartition()
+
+		var corre = mbr.GetCorrelativo()
+
+		// Crear la partición con los parámetros proporcionados
+		availablePartition.CreatePartition(startPartition, sizeBytes, fdisk.typ, fdisk.fit, fdisk.name, corre)
+
+		// Print para verificar que la partición se haya creado correctamente
+		//fmt.Println("\n--Partición creada (modificada)--")
+		//availablePartition.PrintPartition()
+
+		// Se cambio el puntero de las particiones a las actuales
+		mbr.Mbr_partitions[indexPartition] = *availablePartition
+
+		// Imprimir las particiones del MBR
+		fmt.Println("\n--Particiones del MBR--")
+		mbr.PrintPartitions()
+	}*/
+
+	/*// Serializar el MBR en el archivo binario
+	err = mbr.SerializeMBR(fdisk.path)
+	if err != nil {
+		fmt.Println("Error:", err)
+		err2 = err //En caso de que ocura un error se retorna
+	}*/
+
+	return err2 //Si no ocurrio ningun error se retorna nil
 }

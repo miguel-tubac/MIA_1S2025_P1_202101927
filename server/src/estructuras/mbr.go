@@ -178,7 +178,7 @@ func (mbr *MBR) GetExtendedPartition() bool {
 	// Recorrer las particiones del MBR
 	for _, partition := range mbr.Mbr_partitions {
 		// Convertir Part_name a string y eliminar los caracteres nulos
-		partitionType := strings.Trim(string(partition.Part_fit[:]), "\x00 ")
+		partitionType := strings.Trim(string(partition.Part_type[:]), "\x00 ")
 
 		// Si el nombre de la partición coincide, devolver la partición y el índice
 		if strings.EqualFold(partitionType, "E") {
@@ -187,4 +187,21 @@ func (mbr *MBR) GetExtendedPartition() bool {
 		}
 	}
 	return false
+}
+
+// Funcion para obtener la particion extendida
+func (mbr *MBR) GetExtendedPartition2() *PARTITION {
+	// Recorrer las particiones del MBR
+	for _, partition := range mbr.Mbr_partitions {
+		// Convertir Part_name a string y eliminar los caracteres nulos
+		partitionType := strings.Trim(string(partition.Part_type[:]), "\x00 ")
+		//fmt.Println("Aqui 2:")
+		//fmt.Println(partitionType)
+		// Si el nombre de la partición coincide, devolver la partición y el índice
+		if strings.EqualFold(partitionType, "E") {
+			fmt.Println("Ya existe una particion extendida")
+			return &partition
+		}
+	}
+	return nil
 }

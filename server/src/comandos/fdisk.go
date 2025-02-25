@@ -212,19 +212,10 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 
 	//Se comprueba si existe otra particion con el mismo nombre
 	if mbr.ExisteNombre(fdisk.name) && availablePartition != nil && startPartition != -1 {
-		/* SOLO PARA VERIFICACIÓN */
-		// Print para verificar que la partición esté disponible
-		//fmt.Println("\n--Partición disponible--")
-		//availablePartition.PrintPartition()
-
 		var corre = mbr.GetCorrelativo()
 
 		// Crear la partición con los parámetros proporcionados
 		availablePartition.CreatePartition(startPartition, sizeBytes, fdisk.typ, fdisk.fit, fdisk.name, corre)
-
-		// Print para verificar que la partición se haya creado correctamente
-		//fmt.Println("\n--Partición creada (modificada)--")
-		//availablePartition.PrintPartition()
 
 		// Se cambio el puntero de las particiones a las actuales
 		mbr.Mbr_partitions[indexPartition] = *availablePartition
@@ -262,16 +253,6 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 	fmt.Println("\n--MBR original--")
 	mbr.PrintMBR()
 
-	// Obtener la primera partición disponible
-	/*PARTITION:
-	  Part_status      [1]byte  // Estado de la partición
-	  Part_type        [1]byte  // Tipo de partición
-	  Part_fit         [1]byte  // Ajuste de la partición
-	  Part_start       int32    // Byte de inicio de la partición
-	  Part_size        int32    // Tamaño de la partición
-	  Part_name        [16]byte // Nombre de la partición
-	  Part_correlative int32    // Correlativo de la partición
-	  Part_id          [4]byte  // ID de la partición */
 	availablePartition, startPartition, indexPartition := mbr.GetFirstAvailablePartition() //*PARTITION, int, int   (Retornos)
 	var err2 error
 	err2 = nil
@@ -287,24 +268,16 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 
 	// Se comprueba si existe otra particion con el mismo nombre
 	if mbr.ExisteNombre(fdisk.name) && availablePartition != nil && startPartition != -1 && !validacion_extendida {
-		/* SOLO PARA VERIFICACIÓN */
-		// Print para verificar que la partición esté disponible
-		//fmt.Println("\n--Partición disponible--")
-		//availablePartition.PrintPartition()
-
+		//OBtiene el correlativo
 		var corre = mbr.GetCorrelativo()
 
 		// Crear la partición con los parámetros proporcionados
 		availablePartition.CreatePartition(startPartition, sizeBytes, fdisk.typ, fdisk.fit, fdisk.name, corre)
 
-		// Print para verificar que la partición se haya creado correctamente
-		//fmt.Println("\n--Partición creada (modificada)--")
-		//availablePartition.PrintPartition()
-
 		// Se cambio el puntero de las particiones a las actuales
 		mbr.Mbr_partitions[indexPartition] = *availablePartition
 
-		// Imprimir las particiones del MBR
+		// Imprimir las particiones del MBR solo para comprobar
 		fmt.Println("\n--Particiones del MBR--")
 		mbr.PrintPartitions()
 	}
@@ -337,7 +310,7 @@ func createEBR(fdisk *FDISK, sizeBytes int) error {
 	ebr := &structures.EBR{
 		Ebr_mount: [1]byte{'N'},
 		Ebr_fit:   [1]byte{'N'},
-		Ebr_start: int32(-1),
+		Ebr_start: int32(paricion.Part_start),
 		Ebr_size:  int32(-1),
 		Ebr_next:  int32(-1),
 		Ebr_name:  [16]byte{'N'},
@@ -371,7 +344,6 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 		return err
 	}
 
-	/* SOLO PARA VERIFICACIÓN */
 	// Imprimir MBR
 	fmt.Println("\n--MBR original--")
 	mbr.PrintMBR()
@@ -379,16 +351,13 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 	//Validar si existe la particion extendida
 	var err2 error
 	err2 = nil
-	validacion_extendida := mbr.GetExtendedPartition()
-	//fmt.Println(validacion_extendida)
+	validacion_extendida := mbr.GetExtendedPartition() //Retonra true si existe la particion extendida
 	if validacion_extendida {
 		//obtenemos la particion
 		particion := mbr.GetExtendedPartition2()
 
 		//Obtenemos el objeto EBR deserealizandolo del dico
-		var ebr structures.EBR
-		//fmt.Println("Aqui Miguel:")
-		//fmt.Println(particion.Part_start)                           //Objeto donde se deserealizara el ebr
+		var ebr structures.EBR                                      //Objeto donde se deserealizara el ebr
 		err2 = ebr.DeserializeEBR(fdisk.path, particion.Part_start) //Se deserealiza el primer EBR de la extendida
 		if err2 != nil {
 			fmt.Println("Error deserializando el EBR:", err2)
@@ -399,63 +368,20 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 		fmt.Println("\n--EBR original--")
 		ebr.PrintEBR()
 
-		//Devolver el start tomando en cuenta el valor de Bytes del EBR
-		starPartition := ebr.BuscarEBRDisponible(fdisk.path, particion.Part_start)
-
-		// Seleccionar el tipo de ajuste
-		var fitByte byte
-		switch fdisk.fit {
-		case "FF":
-			fitByte = 'F'
-		case "BF":
-			fitByte = 'B'
-		case "WF":
-			fitByte = 'W'
-		default:
-			fmt.Println("Invalid fit type")
-			return nil
+		//Necesito debolver la primera particion logica disponible
+		availablePartition, startPartition := ebr.GetFirstAvailablePartition(fdisk.path) //*EBR, int   (Retornos)
+		if availablePartition == nil {
+			err2 = errors.New("ya no hay particiones logicas disponibles")
+			return err2
 		}
-		ebr.CreateLogical(fitByte, int32(starPartition), fdisk.size, fdisk.name)
-
-		/*
-			Ebr_mount [1]byte  // Indica si la partición está montada o no
-			Ebr_fit   [1]byte  // Tipo de ajuste de la partición. Tendrá los valores B (Best), F(First) o W (worst)
-			Ebr_start int32    // Indica en qué byte del disco inicia la partición
-			Ebr_size  int32    // Contiene el tamaño total de la partición en bytes.
-			Ebr_next  int32    // Byte en el que está el próximo EBR. -1 si no hay siguiente
-			Ebr_name  [16]byte //Nombre de la partición*/
-	}
-
-	// Se comprueba si existe otra particion con el mismo nombre
-	/*if mbr.ExisteNombre(fdisk.name) && availablePartition != nil && startPartition != -1 && !validacion_extendida {
-		// SOLO PARA VERIFICACIÓN
-		// Print para verificar que la partición esté disponible
-		//fmt.Println("\n--Partición disponible--")
-		//availablePartition.PrintPartition()
-
-		var corre = mbr.GetCorrelativo()
 
 		// Crear la partición con los parámetros proporcionados
 		availablePartition.CreatePartition(startPartition, sizeBytes, fdisk.typ, fdisk.fit, fdisk.name, corre)
 
-		// Print para verificar que la partición se haya creado correctamente
-		//fmt.Println("\n--Partición creada (modificada)--")
-		//availablePartition.PrintPartition()
-
 		// Se cambio el puntero de las particiones a las actuales
 		mbr.Mbr_partitions[indexPartition] = *availablePartition
 
-		// Imprimir las particiones del MBR
-		fmt.Println("\n--Particiones del MBR--")
-		mbr.PrintPartitions()
-	}*/
-
-	/*// Serializar el MBR en el archivo binario
-	err = mbr.SerializeMBR(fdisk.path)
-	if err != nil {
-		fmt.Println("Error:", err)
-		err2 = err //En caso de que ocura un error se retorna
-	}*/
+	}
 
 	return err2 //Si no ocurrio ningun error se retorna nil
 }

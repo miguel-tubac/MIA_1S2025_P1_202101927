@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type EBR struct {
@@ -93,27 +94,80 @@ func (ebr *EBR) PrintEBR() {
 }
 
 // Método para obtener la primera partición disponible del ebr
-func (ebr *EBR) GetFirstAvailablePartition(path string) (*EBR, int) {
+func (ebr *EBR) GetFirstAvailablePartition(path string, name string) (*EBR, int) {
 	// Calcular el offset para el start de la partición
 	offset := binary.Size(ebr) // Tamaño del EBR en bytes
-	currentEBR := *ebr         // Copia del EBR inicial para no modificar el original
+	offset += int(ebr.Ebr_start)
+	currentEBR := *ebr // Copia del EBR inicial para no modificar el original
 
 	// Recorrer las particiones del MBR
 	for {
+		//Comprovamos que no exista ya el nombre
+		// Convertir Part_name a string y eliminar los caracteres nulos
+		nombre := strings.Trim(string(currentEBR.Ebr_name[:]), "\x00 ")
+		if strings.EqualFold(nombre, name) {
+			break
+		}
 		// Si el next de la partición es -1, entonces está disponible
 		if currentEBR.Ebr_next == -1 {
 			// Devolver la partición, el offset y el índice
 			return &currentEBR, offset
 		} else {
+			// Calcular el nuevo offset para la siguiente partición, es decir, sumar el tamaño de la partición
+			offset += int(currentEBR.Ebr_size)
 			//Se deserealiza el sigueinte EBR
 			err := currentEBR.DeserializeEBR(path, currentEBR.Ebr_next)
 			if err != nil { //Validamos si no retorna error al deserealizar
 				fmt.Println("Error deserializando el EBR:", err)
 				return nil, -1
 			}
-			// Calcular el nuevo offset para la siguiente partición, es decir, sumar el tamaño de la partición
-			offset += int(currentEBR.Ebr_size)
+			offset += binary.Size(currentEBR) // Tamaño del EBR
 		}
 	}
-	//return nil, -1
+	return nil, -2
+}
+
+// Crear una partición con los parámetros proporcionados
+func (ebr *EBR) CreatePartition(fit [1]byte, partStart, size int32, name string) {
+	//Se obtinen en donde inicia el sigueinte EBR, en donde inicia
+	next := partStart + size //obtiene el start de la sigueinte particion
+	start := partStart - int32(binary.Size(ebr))
+
+	//asiganamos el fit
+	ebr.Ebr_fit = fit
+
+	//Asiganamos el start
+	ebr.Ebr_start = start
+
+	//Asignamos el size
+	ebr.Ebr_size = size
+
+	//Asigansmos el next
+	ebr.Ebr_next = int32(next)
+
+	//Asignamos el name
+	copy(ebr.Ebr_name[:], name)
+}
+
+// Método para imprimir todas las particiones logicas de la particion extendida
+func (ebr *EBR) PrintParticiones(path string) {
+	currentEBR := *ebr // Copia del EBR inicial para no modificar el original
+	// Recorrer las particiones del MBR
+	for {
+		// Si el next de la partición es -1, entonces está disponible
+		if currentEBR.Ebr_next == -1 {
+			// Impimimos la ultima particion
+			currentEBR.PrintEBR()
+			return
+		} else {
+			// Impimimos la particion
+			currentEBR.PrintEBR()
+			//Se deserealiza el sigueinte EBR
+			err := currentEBR.DeserializeEBR(path, currentEBR.Ebr_next)
+			if err != nil { //Validamos si no retorna error al deserealizar
+				fmt.Println("Error deserializando el EBR:", err)
+				return
+			}
+		}
+	}
 }

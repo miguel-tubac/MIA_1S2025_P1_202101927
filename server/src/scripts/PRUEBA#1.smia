@@ -3,13 +3,15 @@
 #Eliminamos si ya existen los discos
 rmdisk -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
 
-mkdisk -size=30 -unit=K -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
+mkdisk -size=300 -unit=K -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
 
 #------Creacion de una particion Primaria
 fdisk -Size=3 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -name=Particion1
 
 #------Creacion de una particion Extendida
-fdisk -type=E -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -Unit=K -name=Particion2 -size=3
+fdisk -type=E -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -Unit=K -name=Particion2 -size=30
 
 #------Agregamos una particion Logica a la Extendida
 fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia" -name="Particion3"
+fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia" -name="Particion3"
+fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia" -name="Particion5"

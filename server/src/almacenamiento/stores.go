@@ -41,3 +41,8 @@ func GetMountedPartition(id string) (*structures.PARTITION, string, error) {
 
 //Para mostrar las particiones que el comando mounted
 //Solo se recorre la lista var
+
+// Función para obtener todas las particiones montadas
+func GetPartitions() map[string]string {
+	return MountedPartitions
+}

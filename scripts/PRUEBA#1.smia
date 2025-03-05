@@ -8,6 +8,7 @@ mkdisk -size=300 -unit=K -path=/home/miguel/Descargas/Archivos/Laboratorio/Proye
 
 #------Creacion de una particion Primaria
 fdisk -Size=3 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -name="Particion1"
+fdisk -Size=3 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -name="Part"
 
 #------Creacion de una particion Extendida
 fdisk -type=E -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -Unit=K -name=Particion2 -size=30
@@ -19,3 +20,7 @@ fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Lab
 
 #------Se monta las particiones (solo se puede aplicar a las Primarias)
 mount -name="Particion1" -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
+mount -name="Part" -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
+
+#------Mostrar las particiones montadas
+mounted

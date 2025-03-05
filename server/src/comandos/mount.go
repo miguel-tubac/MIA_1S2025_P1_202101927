@@ -84,7 +84,7 @@ func ParseMount(tokens []string) (*MOUNT, error) {
 		return nil, err
 	}
 
-	return cmd, fmt.Errorf("Moun realizado: %s", cmd) // Devuelve el comando MOUNT creado
+	return cmd, fmt.Errorf("Mount realizado: %+v", *cmd) // Devuelve el comando MOUNT creado
 }
 
 func commandMount(mount *MOUNT) error {
@@ -153,4 +153,22 @@ func generatePartitionID(mount *MOUNT) (string, int, error) {
 	idPartition := fmt.Sprintf("%s%d%s", stores.Carnet, partitionCorrelative, letter)
 
 	return idPartition, partitionCorrelative, nil
+}
+
+// Esta es la funcion del mounted, la cual unicamente retorna los id de las particiones
+type ID struct {
+	datos string
+}
+
+func MountedParser() (*ID, error) {
+	inicial := &ID{}
+	lista := stores.GetPartitions()
+	resultado := " "
+	for key, _ := range lista {
+		resultado += key + "  "
+	}
+
+	inicial.datos = resultado
+
+	return inicial, fmt.Errorf("ID montados: %+v", *inicial)
 }

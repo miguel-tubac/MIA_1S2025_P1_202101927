@@ -1,0 +1,21 @@
+#-------------------------------------------Creacion del disco------------------------------------------------------
+
+#------Eliminamos si ya existen los discos
+rmdisk -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
+
+#------Creamos el disco con el nombre Disco1
+mkdisk -size=300 -unit=K -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
+
+#------Creacion de una particion Primaria
+fdisk -Size=3 -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -name="Particion1"
+
+#------Creacion de una particion Extendida
+fdisk -type=E -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia -Unit=K -name=Particion2 -size=30
+
+#------Agregamos particiones Logicas a la Extendida
+fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia" -name="Particion3"
+fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia" -name="Particion4"
+fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia" -name="Particion5"
+
+#------Se monta las particiones (solo se puede aplicar a las Primarias)
+mount -name="Particion1" -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia

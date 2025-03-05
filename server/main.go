@@ -39,9 +39,11 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 	var resultErrors string
 	resultErrors = ""
 	if len(errs) > 0 {
+		fmt.Println("Esta es la Longitud:")
+		fmt.Println(len(errs))
 		for _, err := range errs {
-			fmt.Println(err)
-			resultErrors += err.Error()
+			//fmt.Println(err)
+			resultErrors += err.Error() + "\n"
 		}
 	}
 
@@ -50,14 +52,14 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 	resultStr = ""
 	for _, item := range cmd {
 		if item != nil && fmt.Sprintf("%+v", item) != "<nil>" {
-			fmt.Println(item)
-			resultStr += fmt.Sprintf("%+v \n", item)
+			//fmt.Println(item)
+			//resultStr += fmt.Sprintf("%+v \n", item)
 		}
 	}
 	//Se unen los erroes al final
 	resultStr += resultErrors
 	response := ResponseData{
-		Consola:    fmt.Sprintf("Result: %s", resultStr),
+		Consola:    fmt.Sprintf("%s", resultStr),
 		TablaError: []string{},
 	}
 

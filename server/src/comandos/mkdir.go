@@ -117,7 +117,7 @@ func ParseMkdisk(tokens []string) (*MKDISK, error) {
 		return nil, err
 	}
 
-	return cmd, nil // Devuelve el comando MKDISK creado
+	return cmd, fmt.Errorf("Disco generado: %+v", *cmd) // Devuelve el comando MKDISK creado
 }
 
 func commandMkdisk(mkdisk *MKDISK) error {

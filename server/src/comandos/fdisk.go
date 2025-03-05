@@ -133,7 +133,7 @@ func ParseFdisk(tokens []string) (*FDISK, error) {
 		return cmd, err
 	}
 
-	return cmd, nil // Devuelve el comando FDISK creado
+	return cmd, fmt.Errorf("Particion generada: %+v", *cmd) // Devuelve el comando FDISK creado
 }
 
 func commandFdisk(fdisk *FDISK) error {
@@ -141,7 +141,7 @@ func commandFdisk(fdisk *FDISK) error {
 	sizeBytes, err := utils.ConvertToBytes(fdisk.size, fdisk.unit)
 	if err != nil {
 		fmt.Println("Error al convertir las unidades de size:", err)
-		return err
+		return fmt.Errorf("Error al convertir las unidades de size: %s", err)
 	}
 
 	if fdisk.typ == "P" {
@@ -149,26 +149,26 @@ func commandFdisk(fdisk *FDISK) error {
 		err = createPrimaryPartition(fdisk, sizeBytes)
 		if err != nil {
 			fmt.Println("Error creando partición primaria:", err)
-			return err
+			return fmt.Errorf("Error creando partición primaria: %s", err)
 		}
 	} else if fdisk.typ == "E" {
 		fmt.Println("Creando partición extendida...") // Les toca a ustedes implementar la partición extendida
 		err = createExtendidaPartition(fdisk, sizeBytes)
 		if err != nil {
 			fmt.Println("Error creando partición extendida:", err)
-			return err
+			return fmt.Errorf("Error creando partición extendida: %s", err)
 		}
 		err2 := createEBR(fdisk, sizeBytes)
 		if err2 != nil {
 			fmt.Println("Error creando el EBR:", err2)
-			return err2
+			return fmt.Errorf("Error creando el EBR: %s", err2)
 		}
 	} else if fdisk.typ == "L" {
 		fmt.Println("Creando partición lógica...") // Les toca a ustedes implementar la partición lógica
 		err = createLogicPartition(fdisk, sizeBytes)
 		if err != nil {
 			fmt.Println("Error agregando la particion Logica:", err)
-			return err
+			return fmt.Errorf("Error agregando la particion Logica: %s", err)
 		}
 	}
 

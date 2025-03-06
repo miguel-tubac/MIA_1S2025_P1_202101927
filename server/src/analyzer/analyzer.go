@@ -63,8 +63,15 @@ func Analyzer(input string) ([]interface{}, []error) {
 				errors = append(errors, err)
 			}
 		case "mounted":
-			// Llama a la función para el mount
+			// Llama a la función para el mounted
 			result, err := comandos.MountedParser()
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
+			}
+		case "mkfs":
+			result, err := comandos.ParseMkfs(tokens[1:])
 			results = append(results, result)
 			//results = append(results, "\n")
 			if err != nil {

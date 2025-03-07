@@ -79,7 +79,7 @@ func ParseRep(tokens []string) (*REP, error) {
 	// Aquí se puede agregar la lógica para ejecutar el comando rep con los parámetros proporcionados
 	err := commandRep(cmd)
 	if err != nil {
-		fmt.Println("Error:", err)
+		//fmt.Println("Error:", err)
 		return nil, err
 	}
 
@@ -107,11 +107,13 @@ func commandRep(rep *REP) error {
 	// Switch para manejar diferentes tipos de reportes
 	switch rep.name {
 	case "mbr":
-		err = reports.ReportMBR(mountedMbr, rep.path)
+		err = reports.ReportMBR(mountedMbr, rep.path, mountedDiskPath)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return err
 		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("Imagen del MBR generada: %s", rep.path)
 	case "inode":
 		err = reports.ReportInode(mountedSb, mountedDiskPath, rep.path)
 		if err != nil {

@@ -24,3 +24,6 @@ mount -name="Part" -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/s
 
 #------Mostrar las particiones montadas
 mounted
+
+#MBR y EBR Disco1.mia
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte1.jpg -name=mbr

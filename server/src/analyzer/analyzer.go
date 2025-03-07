@@ -77,6 +77,13 @@ func Analyzer(input string) ([]interface{}, []error) {
 			if err != nil {
 				errors = append(errors, err)
 			}
+		case "rep":
+			result, err := comandos.ParseRep(tokens[1:])
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
+			}
 		default:
 			// Si el comando no es reconocido, agregamos el error
 			errors = append(errors, fmt.Errorf("comando desconocido: %s", tokens[0]))

@@ -76,3 +76,10 @@ func GetFileNames(path string) (string, string) {
 	outputImage := path
 	return dotFileName, outputImage
 }
+
+// Función para reiniciar los valores
+func ResetMapsAndIndex() {
+	pathToLetter = make(map[string]string)      // Reinicia el mapa de letras asignadas
+	pathToPartitionCount = make(map[string]int) // Reinicia el contador de particiones
+	nextLetterIndex = 0                         // Reinicia el índice de la siguiente letra disponible
+}

@@ -81,3 +81,8 @@ func GetMountedPartitionRep(id string) (*structures.MBR, *structures.SuperBlock,
 
 	return &mbr, &sb, path, nil
 }
+
+// Esta funcion reinicia el map de los ids
+func ClearMountedPartitions() {
+	MountedPartitions = make(map[string]string) // Reinicia el map
+}

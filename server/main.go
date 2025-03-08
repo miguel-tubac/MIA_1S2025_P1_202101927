@@ -9,6 +9,9 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	stores "bakend/src/almacenamiento"
+	utils "bakend/src/utils"
 )
 
 type RequestData struct {
@@ -32,6 +35,9 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error al procesar la solicitud", http.StatusBadRequest)
 		return
 	}
+	//Se reinicia la lista de los id´s montados
+	stores.ClearMountedPartitions()
+	utils.ResetMapsAndIndex()
 	//fmt.Println(requestData.Entrada)
 	cmd, errs := analyzer.Analyzer(requestData.Entrada)
 

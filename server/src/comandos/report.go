@@ -24,7 +24,7 @@ func ParseRep(tokens []string) (*REP, error) {
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
 	args := strings.Join(tokens, " ")
 	// Expresión regular para encontrar los parámetros del comando rep
-	re := regexp.MustCompile(`-id=[^\s]+|-path="[^"]+"|-path=[^\s]+|-name=[^\s]+|-path_file_ls="[^"]+"|-path_file_ls=[^\s]+`)
+	re := regexp.MustCompile(`-(?i:id=[^\s]+|path="[^"]+"|path=[^\s]+|name=[^\s]+|path_file_ls="[^"]+"|path_file_ls=[^\s]+)`)
 	// Encuentra todas las coincidencias de la expresión regular en la cadena de argumentos
 	matches := re.FindAllString(args, -1)
 
@@ -57,6 +57,8 @@ func ParseRep(tokens []string) (*REP, error) {
 			}
 			cmd.path = value
 		case "-name":
+			//Convertimos todo a minuscula
+			value = strings.ToLower(value)
 			// Verifica que el nombre sea uno de los valores permitidos
 			validNames := []string{"mbr", "disk", "inode", "block", "bm_inode", "bm_block", "sb", "file", "ls"}
 			if !contains(validNames, value) {
@@ -113,7 +115,7 @@ func commandRep(rep *REP) error {
 			return err
 		}
 		//Rerornamos el mensaje de satisfacion
-		return fmt.Errorf("Imagen del MBR generada: %s", rep.path)
+		return fmt.Errorf("imagen del MBR generada: %s", rep.path)
 	case "inode":
 		err = reports.ReportInode(mountedSb, mountedDiskPath, rep.path)
 		if err != nil {

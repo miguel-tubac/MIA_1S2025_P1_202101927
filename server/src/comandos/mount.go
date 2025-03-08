@@ -31,7 +31,7 @@ func ParseMount(tokens []string) (*MOUNT, error) {
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
 	args := strings.Join(tokens, " ")
 	// Expresión regular para encontrar los parámetros del comando mount
-	re := regexp.MustCompile(`-path="[^"]+"|-path=[^\s]+|-name="[^"]+"|-name=[^\s]+`)
+	re := regexp.MustCompile(`-(?i:path="[^"]+"|path=[^\s]+|name="[^"]+"|name=[^\s]+)`)
 	// Encuentra todas las coincidencias de la expresión regular en la cadena de argumentos
 	matches := re.FindAllString(args, -1)
 
@@ -84,7 +84,7 @@ func ParseMount(tokens []string) (*MOUNT, error) {
 		return nil, err
 	}
 
-	return cmd, fmt.Errorf("Mount realizado: %+v", *cmd) // Devuelve el comando MOUNT creado
+	return cmd, fmt.Errorf("mount realizado: %+v", *cmd) // Devuelve el comando MOUNT creado
 }
 
 func commandMount(mount *MOUNT) error {
@@ -102,13 +102,13 @@ func commandMount(mount *MOUNT) error {
 	partition, indexPartition := mbr.GetPartitionByName(mount.name)
 	if partition == nil {
 		fmt.Println("Error: la partición no existe")
-		return errors.New("Error en el mount: la partición no existe")
+		return errors.New("error en el mount: la partición no existe")
 	}
 
 	/* SOLO PARA VERIFICACIÓN */
 	// Print para verificar que la partición se encontró correctamente
-	fmt.Println("\nPartición disponible:")
-	partition.PrintPartition()
+	//fmt.Println("\nPartición disponible:")
+	//partition.PrintPartition()
 
 	// Generar un id único para la partición
 	idPartition, partitionCorrelative, err := generatePartitionID(mount)
@@ -125,8 +125,8 @@ func commandMount(mount *MOUNT) error {
 
 	/* SOLO PARA VERIFICACIÓN */
 	// Print para verificar que la partición se haya montado correctamente
-	fmt.Println("\nPartición montada (modificada):")
-	partition.PrintPartition()
+	//fmt.Println("\nPartición montada (modificada):")
+	//partition.PrintPartition()
 
 	// Guardar la partición modificada en el MBR
 	mbr.Mbr_partitions[indexPartition] = *partition
@@ -156,6 +156,7 @@ func generatePartitionID(mount *MOUNT) (string, int, error) {
 }
 
 // Esta es la funcion del mounted, la cual unicamente retorna los id de las particiones
+// Esta es par amostrar todos los ID que se encuentran montados
 type ID struct {
 	datos string
 }

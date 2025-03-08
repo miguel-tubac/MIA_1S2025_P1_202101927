@@ -133,7 +133,7 @@ func ParseFdisk(tokens []string) (*FDISK, error) {
 		return cmd, err
 	}
 
-	return cmd, fmt.Errorf("Particion generada: %+v", *cmd) // Devuelve el comando FDISK creado
+	return cmd, fmt.Errorf("particion generada: %+v", *cmd) // Devuelve el comando FDISK creado
 }
 
 func commandFdisk(fdisk *FDISK) error {
@@ -141,7 +141,7 @@ func commandFdisk(fdisk *FDISK) error {
 	sizeBytes, err := utils.ConvertToBytes(fdisk.size, fdisk.unit)
 	if err != nil {
 		fmt.Println("Error al convertir las unidades de size:", err)
-		return fmt.Errorf("Error al convertir las unidades de size: %s", err)
+		return fmt.Errorf("error al convertir las unidades de size: %s", err)
 	}
 
 	if fdisk.typ == "P" {
@@ -149,26 +149,26 @@ func commandFdisk(fdisk *FDISK) error {
 		err = createPrimaryPartition(fdisk, sizeBytes)
 		if err != nil {
 			fmt.Println("Error creando partición primaria:", err)
-			return fmt.Errorf("Error creando partición primaria: %s", err)
+			return fmt.Errorf("error creando partición primaria: %s", err)
 		}
 	} else if fdisk.typ == "E" {
 		fmt.Println("Creando partición extendida...") // Les toca a ustedes implementar la partición extendida
 		err = createExtendidaPartition(fdisk, sizeBytes)
 		if err != nil {
 			fmt.Println("Error creando partición extendida:", err)
-			return fmt.Errorf("Error creando partición extendida: %s", err)
+			return fmt.Errorf("error creando partición extendida: %s", err)
 		}
 		err2 := createEBR(fdisk, sizeBytes)
 		if err2 != nil {
 			fmt.Println("Error creando el EBR:", err2)
-			return fmt.Errorf("Error creando el EBR: %s", err2)
+			return fmt.Errorf("error creando el EBR: %s", err2)
 		}
 	} else if fdisk.typ == "L" {
 		fmt.Println("Creando partición lógica...") // Les toca a ustedes implementar la partición lógica
 		err = createLogicPartition(fdisk, sizeBytes)
 		if err != nil {
 			fmt.Println("Error agregando la particion Logica:", err)
-			return fmt.Errorf("Error agregando la particion Logica: %s", err)
+			return fmt.Errorf("error agregando la particion Logica: %s", err)
 		}
 	}
 
@@ -190,8 +190,8 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 
 	/* SOLO PARA VERIFICACIÓN */
 	// Imprimir MBR
-	fmt.Println("\n--MBR original--")
-	mbr.PrintMBR()
+	//fmt.Println("\n--MBR original--")
+	//mbr.PrintMBR()
 
 	// Obtener la primera partición disponible
 	/*PARTITION:
@@ -221,8 +221,8 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 		mbr.Mbr_partitions[indexPartition] = *availablePartition
 
 		// Imprimir las particiones del MBR
-		fmt.Println("\n--Particiones del MBR--")
-		mbr.PrintPartitions()
+		//fmt.Println("\n--Particiones del MBR--")
+		//mbr.PrintPartitions()
 	}
 
 	// Serializar el MBR en el archivo binario
@@ -250,8 +250,8 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 
 	/* SOLO PARA VERIFICACIÓN */
 	// Imprimir MBR
-	fmt.Println("\n--MBR original--")
-	mbr.PrintMBR()
+	//fmt.Println("\n--MBR original--")
+	//mbr.PrintMBR()
 
 	availablePartition, startPartition, indexPartition := mbr.GetFirstAvailablePartition() //*PARTITION, int, int   (Retornos)
 	var err2 error
@@ -278,8 +278,8 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 		mbr.Mbr_partitions[indexPartition] = *availablePartition
 
 		// Imprimir las particiones del MBR solo para comprobar
-		fmt.Println("\n--Particiones del MBR--")
-		mbr.PrintPartitions()
+		//fmt.Println("\n--Particiones del MBR--")
+		//mbr.PrintPartitions()
 	}
 
 	// Serializar el MBR en el archivo binario
@@ -349,8 +349,8 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 	}
 
 	// Imprimir MBR
-	fmt.Println("\n--MBR original--")
-	mbr.PrintMBR()
+	//fmt.Println("\n--MBR original--")
+	//mbr.PrintMBR()
 
 	//Validar si existe la particion extendida
 	var err2 error
@@ -368,8 +368,8 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 		}
 
 		//Imprimimos el EBR para verificar
-		fmt.Println("\n--EBR original (todos los ebr)--")
-		ebr.PrintParticiones(fdisk.path)
+		//fmt.Println("\n--EBR original (todos los ebr)--")
+		//ebr.PrintParticiones(fdisk.path)
 
 		//Necesito debolver la primera particion logica disponible
 		availablePartition, startPartition := ebr.GetFirstAvailablePartition(fdisk.path, fdisk.name) //*EBR, int   (Retornos)

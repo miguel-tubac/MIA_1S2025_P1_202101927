@@ -29,7 +29,7 @@ func ParseMkfs(tokens []string) (*MKFS, error) {
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
 	args := strings.Join(tokens, " ")
 	// Expresión regular para encontrar los parámetros del comando mkfs
-	re := regexp.MustCompile(`-id=[^\s]+|-type=[^\s]+`)
+	re := regexp.MustCompile(`-(?i:id=[^\s]+|type=[^\s]+)`)
 	// Encuentra todas las coincidencias de la expresión regular en la cadena de argumentos
 	matches := re.FindAllString(args, -1)
 
@@ -54,6 +54,8 @@ func ParseMkfs(tokens []string) (*MKFS, error) {
 			if value == "" {
 				return nil, errors.New("el id no puede estar vacío")
 			}
+			//fmt.Println("Este es el id::::")
+			//fmt.Println(value)
 			cmd.id = value
 		case "-type":
 			// Verifica que el tipo sea "full"
@@ -81,9 +83,10 @@ func ParseMkfs(tokens []string) (*MKFS, error) {
 	err := commandMkfs(cmd)
 	if err != nil {
 		fmt.Println("Error:", err)
+		return nil, err
 	}
 
-	return cmd, nil // Devuelve el comando MKFS creado
+	return cmd, fmt.Errorf("estructura ext2 generada: %+v", *cmd) // Devuelve el comando MKFS creado
 }
 
 func commandMkfs(mkfs *MKFS) error {
@@ -94,21 +97,21 @@ func commandMkfs(mkfs *MKFS) error {
 	}
 
 	// Verificar la partición montada
-	fmt.Println("\nPatición montada:")
-	mountedPartition.PrintPartition()
+	//fmt.Println("\nPatición montada:")
+	//mountedPartition.PrintPartition()
 
 	// Calcular el valor de n
 	n := calculateN(mountedPartition)
 
 	// Verificar el valor de n
-	fmt.Println("\nValor de n:", n)
+	//fmt.Println("\nValor de n:", n)
 
 	// Inicializar un nuevo superbloque
 	superBlock := createSuperBlock(mountedPartition, n)
 
 	// Verificar el superbloque
-	fmt.Println("\nSuperBlock:")
-	superBlock.Print()
+	//fmt.Println("\nSuperBlock:")
+	//superBlock.Print()
 
 	// Crear los bitmaps
 	err = superBlock.CreateBitMaps(partitionPath)
@@ -123,8 +126,8 @@ func commandMkfs(mkfs *MKFS) error {
 	}
 
 	// Verificar superbloque actualizado
-	fmt.Println("\nSuperBlock actualizado:")
-	superBlock.Print()
+	//fmt.Println("\nSuperBlock actualizado:")
+	//superBlock.Print()
 
 	// Serializar el superbloque
 	err = superBlock.Serialize(partitionPath, int64(mountedPartition.Part_start))

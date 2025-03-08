@@ -25,5 +25,11 @@ mount -name="Part" -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/s
 #------Mostrar las particiones montadas
 mounted
 
-#MBR y EBR Disco1.mia
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte1.jpg -name=mbr
+
+#------Formateo completo de la partición en ext2
+mkfs -id=271A
+mkfs -id=272A
+
+
+#------Reporte: MBR y EBR Disco1.mia
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte2.jpg -name=mbr

@@ -55,7 +55,7 @@ func Eliminar_Disco(tokens []string) (*RMDISK, error) {
 			}
 			//fmt.Println("Disco eliminado correctamente")
 			cmd.path = value
-			return cmd, fmt.Errorf("Disco eliminado: %+v", *cmd)
+			return cmd, fmt.Errorf("disco eliminado: %+v", *cmd)
 		}
 	}
 	return nil, errors.New("no se especificó un path válido")

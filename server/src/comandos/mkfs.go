@@ -138,6 +138,7 @@ func commandMkfs(mkfs *MKFS) error {
 	return nil
 }
 
+// Calculo de inodos
 func calculateN(partition *structures.PARTITION) int32 {
 	/*
 		numerador = (partition_montada.size - sizeof(Structs::Superblock)

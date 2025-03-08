@@ -77,6 +77,13 @@ func Analyzer(input string) ([]interface{}, []error) {
 			if err != nil {
 				errors = append(errors, err)
 			}
+		case "login":
+			result, err := comandos.ParseLogin(tokens[1:])
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
+			}
 		case "rep":
 			result, err := comandos.ParseRep(tokens[1:])
 			results = append(results, result)

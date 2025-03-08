@@ -150,15 +150,15 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 	sb.S_first_blo += sb.S_block_size
 
 	// Verificar el inodo raíz
-	fmt.Println("\nInodo Raíz:")
-	rootInode.Print()
+	//fmt.Println("\nInodo Raíz:")
+	//rootInode.Print()
 
 	// Verificar el bloque de carpeta raíz
-	fmt.Println("\nBloque de Carpeta Raíz:")
-	rootBlock.Print()
+	//fmt.Println("\nBloque de Carpeta Raíz:")
+	//rootBlock.Print()
 
 	// ----------- Creamos /users.txt -----------
-	usersText := "1,G,root\n1,U,root,123\n"
+	usersText := "1,G,root\n1,U,root,root,123\n"
 
 	// Deserializar el inodo raíz
 	err = rootInode.Deserialize(path, int64(sb.S_inode_start+0)) // 0 porque es el inodo raíz
@@ -245,20 +245,20 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 	sb.S_first_blo += sb.S_block_size
 
 	// Verificar el inodo raíz
-	fmt.Println("\nInodo Raíz Actualizado:")
-	rootInode.Print()
+	//fmt.Println("\nInodo Raíz Actualizado:")
+	//rootInode.Print()
 
 	// Verificar el bloque de carpeta raíz
-	fmt.Println("\nBloque de Carpeta Raíz Actualizado:")
-	rootBlock.Print()
+	//fmt.Println("\nBloque de Carpeta Raíz Actualizado:")
+	//rootBlock.Print()
 
 	// Verificar el inodo users.txt
-	fmt.Println("\nInodo users.txt:")
-	usersInode.Print()
+	//fmt.Println("\nInodo users.txt:")
+	//usersInode.Print()
 
 	// Verificar el bloque de users.txt
-	fmt.Println("\nBloque de users.txt:")
-	usersBlock.Print()
+	//fmt.Println("\nBloque de users.txt:")
+	//usersBlock.Print()
 
 	return nil
 }

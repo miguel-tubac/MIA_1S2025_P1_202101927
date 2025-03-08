@@ -65,7 +65,7 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 	//Se unen los erroes al final
 	resultStr += resultErrors
 	response := ResponseData{
-		Consola:    fmt.Sprintf("%s", resultStr),
+		Consola:    fmt.Sprint(resultStr),
 		TablaError: []string{},
 	}
 

@@ -22,18 +22,16 @@ fdisk -size=1 -type=L -unit=K -fit=BF -path="/home/miguel/Descargas/Archivos/Lab
 mount -name="Particion1" -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
 mount -name="Part" -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/discos/Disco1.mia
 
-#------Mostrar las particiones montadas
-mounted
-
-
 #------Formateo completo de la partición en ext2
 mkfs -id=271A
 mkfs -id=272A
 
-
-#------Reporte: MBR y EBR Disco1.mia
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte2.jpg -name=mbr
-
-
 #------Se loguea en el sistema como usuario root
 login -user=root -pass=123 -id=271A
+#logout
+
+#------Mostrar las particiones montadas
+mounted
+
+#------Reporte: MBR y EBR Disco1.mia
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte2.jpg -name=mbr

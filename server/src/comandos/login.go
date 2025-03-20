@@ -188,6 +188,20 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 	return nil
 }
 
+// Funcion para deslogearse
+func Logout(tokens []string) (*LOGIN, error) {
+	if logeado {
+		logeado = false
+		return nil, errors.New("usuario loslogeado")
+	}
+
+	return nil, errors.New("no puede deslogearse si no existe un usuario loslogeado")
+}
+
 func ObtenerLogin() bool {
 	return logeado
+}
+
+func SetearLogin() {
+	logeado = false
 }

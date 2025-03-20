@@ -35,55 +35,55 @@ func Analyzer(input string) ([]interface{}, []error) {
 		switch comando { // Toma la primera posición de la entrada
 		case "mkdisk":
 			//Aca se valida si ya se realizo un login
-			if comandos.ObtenerLogin() {
-				result, err := comandos.ParseMkdisk(tokens[1:])
-				results = append(results, result)
-				//results = append(results, "\n")
-				if err != nil {
-					errors = append(errors, err)
-				}
-			} else {
-				// Si el comando no es reconocido, agregamos el error
-				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mkdisk\": %s", tokens[0]))
+			//if comandos.ObtenerLogin() {
+			result, err := comandos.ParseMkdisk(tokens[1:])
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
 			}
+			//} else {
+			// Si el comando no es reconocido, agregamos el error
+			//errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mkdisk\": %s", tokens[0]))
+			//}
 		case "rmdisk":
-			if comandos.ObtenerLogin() {
-				result, err := comandos.Eliminar_Disco(tokens[1:])
-				results = append(results, result)
-				//results = append(results, "\n")
-				if err != nil {
-					errors = append(errors, err)
-				}
-			} else {
-				// Si el comando no es reconocido, agregamos el error
-				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"rmdisk\": %s", tokens[0]))
+			// if comandos.ObtenerLogin() {
+			result, err := comandos.Eliminar_Disco(tokens[1:])
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
 			}
+			// } else {
+			// 	// Si el comando no es reconocido, agregamos el error
+			// 	errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"rmdisk\": %s", tokens[0]))
+			// }
 		case "fdisk":
-			if comandos.ObtenerLogin() {
-				result, err := comandos.ParseFdisk(tokens[1:])
-				results = append(results, result)
-				//results = append(results, "\n")
-				if err != nil {
-					errors = append(errors, err)
-				}
-			} else {
-				// Si el comando no es reconocido, agregamos el error
-				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"fdisk\": %s", tokens[0]))
+			// if comandos.ObtenerLogin() {
+			result, err := comandos.ParseFdisk(tokens[1:])
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
 			}
+			// } else {
+			// 	// Si el comando no es reconocido, agregamos el error
+			// 	errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"fdisk\": %s", tokens[0]))
+			// }
 
 		case "mount":
-			if comandos.ObtenerLogin() {
-				// Llama a la función para el mount
-				result, err := comandos.ParseMount(tokens[1:])
-				results = append(results, result)
-				//results = append(results, "\n")
-				if err != nil {
-					errors = append(errors, err)
-				}
-			} else {
-				// Si el comando no es reconocido, agregamos el error
-				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mount\": %s", tokens[0]))
+			// if comandos.ObtenerLogin() {
+			// Llama a la función para el mount
+			result, err := comandos.ParseMount(tokens[1:])
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
 			}
+			// } else {
+			// 	// Si el comando no es reconocido, agregamos el error
+			// 	errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mount\": %s", tokens[0]))
+			// }
 		case "mounted":
 			if comandos.ObtenerLogin() {
 				// Llama a la función para el mounted
@@ -105,11 +105,16 @@ func Analyzer(input string) ([]interface{}, []error) {
 				errors = append(errors, err)
 			}
 		case "login":
-			result, err := comandos.ParseLogin(tokens[1:])
-			results = append(results, result)
-			//results = append(results, "\n")
-			if err != nil {
-				errors = append(errors, err)
+			if !comandos.ObtenerLogin() {
+				result, err := comandos.ParseLogin(tokens[1:])
+				results = append(results, result)
+				//results = append(results, "\n")
+				if err != nil {
+					errors = append(errors, err)
+				}
+			} else {
+				// Si el comando no es reconocido, agregamos el error
+				errors = append(errors, fmt.Errorf("debe deslogearse para utilizar el comando \"login\": %s", tokens[0]))
 			}
 		case "rep":
 			if comandos.ObtenerLogin() {
@@ -122,6 +127,24 @@ func Analyzer(input string) ([]interface{}, []error) {
 			} else {
 				// Si el comando no es reconocido, agregamos el error
 				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"rep\": %s", tokens[0]))
+			}
+		case "logout":
+			result, err := comandos.Logout(tokens[1:])
+			results = append(results, result)
+			if err != nil {
+				errors = append(errors, err)
+			}
+		case "mkgrp":
+			if comandos.ObtenerLogin() {
+				result, err := comandos.ParseMkgrp(tokens[1:])
+				results = append(results, result)
+				//results = append(results, "\n")
+				if err != nil {
+					errors = append(errors, err)
+				}
+			} else {
+				// Si el comando no es reconocido, agregamos el error
+				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mkgrp\": %s", tokens[0]))
 			}
 		default:
 			// Si el comando no es reconocido, agregamos el error

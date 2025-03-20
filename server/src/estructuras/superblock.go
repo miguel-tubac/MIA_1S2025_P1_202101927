@@ -89,7 +89,7 @@ func (sb *SuperBlock) Deserialize(path string, offset int64) error {
 	return nil
 }
 
-// Crear users.txt
+/*// Crear users.txt
 func (sb *SuperBlock) CreateUsersFile(path string) error {
 	// ----------- Creamos / -----------
 	// Creamos el inodo raíz
@@ -261,7 +261,7 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 	//usersBlock.Print()
 
 	return nil
-}
+}*/
 
 // PrintSuperBlock imprime los valores de la estructura SuperBlock
 func (sb *SuperBlock) Print() {
@@ -354,6 +354,24 @@ func (sb *SuperBlock) PrintBlocks(path string) error {
 				continue
 			}
 
+		}
+	}
+
+	return nil
+}
+
+// CreateFolder crea una carpeta en el sistema de archivos
+func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir string) error {
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		return sb.createFolderInInode(path, 0, parentsDir, destDir)
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	for i := int32(0); i < sb.S_inodes_count; i++ {
+		err := sb.createFolderInInode(path, i, parentsDir, destDir)
+		if err != nil {
+			return err
 		}
 	}
 

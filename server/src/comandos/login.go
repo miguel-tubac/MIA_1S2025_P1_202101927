@@ -2,6 +2,9 @@ package analyzer
 
 import (
 	stores "bakend/src/almacenamiento"
+	structures "bakend/src/estructuras"
+
+	//utils "bakend/src/utils"
 	"errors"
 	"fmt"
 	"regexp"
@@ -21,6 +24,8 @@ type LOGIN struct {
 
 	login -user="mi usuario" -pass="mi pwd" -id=062A
 */
+
+var logeado = false
 
 // Commando para validar el login
 func ParseLogin(tokens []string) (*LOGIN, error) {
@@ -91,23 +96,98 @@ func ParseLogin(tokens []string) (*LOGIN, error) {
 		return nil, err
 	}
 
-	return cmd, fmt.Errorf("login realizado: %+v", *cmd) // Devuelve el comando MOUNT creado
+	return cmd, fmt.Errorf("login realizado: %+v", *cmd) // Devuelve el comando LOGIN creado
 }
 
 // Fincion para validar el usuario logeado
 func commandLogear(login *LOGIN) error {
 	// Obtener la partición montada
-	//Tipo de retorno: (particion) structures.PARTITION, (path Disco) string,(error por si algo salia mal) error
-	mountedPartition, partitionPath, err := stores.GetMountedPartition(login.id)
+	//Tipo de retorno: (*structures.SuperBlock, *structures.PARTITION, string, error)
+	partitionSuperblock, _, partitionPath, err := stores.GetMountedPartitionSuperblock(login.id)
+	if err != nil {
+		return fmt.Errorf("error al obtener la partición montada: %w", err)
+	}
+
+	//Aca iniciamos desde el inodo numero 1
+	err2 := Login(partitionPath, login, 1, partitionSuperblock)
+
+	//TODO: validar la salida
+	if err2 != nil {
+		return fmt.Errorf("error al obtener el suuario y contraseña: %w", err2)
+	}
+
+	return nil
+}
+
+// Funcion para accder al archivo de user.txt
+// Login: path del disco, objeto con los datos del usuario, el inicio de los inodos
+func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBlock) error {
+	//Se crea una instancia de un objeto de tipo Inode
+	inode := &structures.Inode{}
+
+	// Deserializar el inodo
+	err := inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
 	if err != nil {
 		return err
 	}
 
-	//1. Obtener el superbloque a partir del start de la particion
-	posision := mountedPartition.Part_start
-	//2. Deserealizar para obtner el superbloque
-	//3. OBtnener el primer inodo
-	//4. Recorrer el bloque de carpetas hasta encontrar el bloque de archivos y deserealizar el contenido de user.txt
-	//5. Comparar la contraseña y agregar una variable global
-	//6. desde el analyzer obter la variable y validar si ya esta logeado
+	//Aca se almacenara el contenido de user.txt
+	data := ""
+	// Iterar sobre cada bloque del inodo (apuntadores)
+	for _, blockIndex := range inode.I_block {
+		// Si el bloque no existe, salir
+		if blockIndex == -1 {
+			break
+		}
+
+		// Crear un nuevo bloque de archivo
+		block := &structures.FileBlock{}
+
+		// Deserializar el bloque desde el incio de los blokes  + posicion por el peso de los bloques  que es 64
+		err := block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size))) // 64 porque es el tamaño de un bloque
+		if err != nil {
+			return err
+		}
+
+		//Obtengo el texto del archivo uset.txt
+		data = strings.Trim(string(block.B_content[:]), "\x00 ")
+
+	}
+
+	/*
+		1,G,root
+		1,U,root,123
+	*/
+
+	// Dividir por salto de línea
+	lines := strings.Split(data, "\n")
+	// Recorrer cada línea y dividir por comas
+	for _, line := range lines {
+		values := strings.Split(line, ",")
+
+		// Almacenar en variables según la cantidad de datos
+		//Esto son los grupos
+		if len(values) == 3 {
+			//id, tipo, nombre := values[0], values[1], values[2]
+			//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s\n", id, tipo, nombre)
+		} else if len(values) == 4 {
+			//Estos son los usuarios
+			_, _, nombre, extra := values[0], values[1], values[2], values[3]
+			if nombre == login.user && extra == login.pass {
+				logeado = true
+				//fmt.Println("Logeado")
+			} else {
+				logeado = false
+				return fmt.Errorf("error con el suario: %s ó contraseña: %s", nombre, extra)
+			}
+
+			//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s, Extra: %s\n", id, tipo, nombre, extra)
+		}
+	}
+
+	return nil
+}
+
+func ObtenerLogin() bool {
+	return logeado
 }

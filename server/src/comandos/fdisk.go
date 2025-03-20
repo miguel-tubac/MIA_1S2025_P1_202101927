@@ -140,7 +140,7 @@ func commandFdisk(fdisk *FDISK) error {
 	// Convertir el tamaño a bytes
 	sizeBytes, err := utils.ConvertToBytes(fdisk.size, fdisk.unit)
 	if err != nil {
-		fmt.Println("Error al convertir las unidades de size:", err)
+		//fmt.Println("Error al convertir las unidades de size:", err)
 		return fmt.Errorf("error al convertir las unidades de size: %s", err)
 	}
 
@@ -148,26 +148,26 @@ func commandFdisk(fdisk *FDISK) error {
 		// Crear partición primaria
 		err = createPrimaryPartition(fdisk, sizeBytes)
 		if err != nil {
-			fmt.Println("Error creando partición primaria:", err)
+			//fmt.Println("Error creando partición primaria:", err)
 			return fmt.Errorf("error creando partición primaria: %s", err)
 		}
 	} else if fdisk.typ == "E" {
-		fmt.Println("Creando partición extendida...") // Les toca a ustedes implementar la partición extendida
+		//fmt.Println("Creando partición extendida...") // Les toca a ustedes implementar la partición extendida
 		err = createExtendidaPartition(fdisk, sizeBytes)
 		if err != nil {
-			fmt.Println("Error creando partición extendida:", err)
+			//fmt.Println("Error creando partición extendida:", err)
 			return fmt.Errorf("error creando partición extendida: %s", err)
 		}
 		err2 := createEBR(fdisk, sizeBytes)
 		if err2 != nil {
-			fmt.Println("Error creando el EBR:", err2)
+			//fmt.Println("Error creando el EBR:", err2)
 			return fmt.Errorf("error creando el EBR: %s", err2)
 		}
 	} else if fdisk.typ == "L" {
-		fmt.Println("Creando partición lógica...") // Les toca a ustedes implementar la partición lógica
+		//fmt.Println("Creando partición lógica...") // Les toca a ustedes implementar la partición lógica
 		err = createLogicPartition(fdisk, sizeBytes)
 		if err != nil {
-			fmt.Println("Error agregando la particion Logica:", err)
+			//fmt.Println("Error agregando la particion Logica:", err)
 			return fmt.Errorf("error agregando la particion Logica: %s", err)
 		}
 	}
@@ -184,7 +184,7 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 	// Deserializar la estructura MBR desde un archivo binario
 	err := mbr.DeserializeMBR(fdisk.path)
 	if err != nil {
-		fmt.Println("Error deserializando el MBR:", err)
+		//fmt.Println("Error deserializando el MBR:", err)
 		return err
 	}
 
@@ -244,7 +244,7 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 	// Deserializar la estructura MBR desde un archivo binario
 	err := mbr.DeserializeMBR(fdisk.path)
 	if err != nil {
-		fmt.Println("Error deserializando el MBR:", err)
+		//fmt.Println("Error deserializando el MBR:", err)
 		return err
 	}
 
@@ -300,7 +300,7 @@ func createEBR(fdisk *FDISK, sizeBytes int) error {
 	// Deserializar la estructura MBR desde un archivo binario
 	err := mbr.DeserializeMBR(fdisk.path)
 	if err != nil {
-		fmt.Println("Error deserializando el MBR:", err)
+		//fmt.Println("Error deserializando el MBR:", err)
 		return err
 	}
 
@@ -344,7 +344,7 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 	// Deserializar la estructura MBR desde un archivo binario
 	err := mbr.DeserializeMBR(fdisk.path)
 	if err != nil {
-		fmt.Println("Error deserializando el MBR:", err)
+		//fmt.Println("Error deserializando el MBR:", err)
 		return err
 	}
 
@@ -363,7 +363,7 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 		//Obtenemos el objeto EBR deserealizandolo del dico                                     //Objeto donde se deserealizara el ebr
 		err2 = ebr.DeserializeEBR(fdisk.path, particion.Part_start) //Se deserealiza el primer EBR de la extendida
 		if err2 != nil {
-			fmt.Println("Error deserializando el EBR:", err2)
+			//fmt.Println("Error deserializando el EBR:", err2)
 			return err2
 		}
 
@@ -408,7 +408,7 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 		//Se vuelve a obtener el nuevo ebr
 		err2 = ebr.DeserializeEBR(fdisk.path, availablePartition.Ebr_start)
 		if err2 != nil {
-			fmt.Println("Error deserializando el EBR:", err2)
+			//fmt.Println("Error deserializando el EBR:", err2)
 			return err2
 		}
 		//Se asigna el ebr anterior al nuevo ebr

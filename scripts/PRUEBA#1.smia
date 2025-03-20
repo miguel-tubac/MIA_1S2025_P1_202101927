@@ -33,3 +33,7 @@ mkfs -id=272A
 
 #------Reporte: MBR y EBR Disco1.mia
 rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte2.jpg -name=mbr
+
+
+#------Se loguea en el sistema como usuario root
+login -user=root -pass=123 -id=271A

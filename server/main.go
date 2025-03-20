@@ -45,8 +45,8 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 	var resultErrors string
 	resultErrors = ""
 	if len(errs) > 0 {
-		fmt.Println("Esta es la Longitud:")
-		fmt.Println(len(errs))
+		//fmt.Println("Esta es la Longitud:")
+		//fmt.Println(len(errs))
 		for _, err := range errs {
 			//fmt.Println(err)
 			resultErrors += err.Error() + "\n"

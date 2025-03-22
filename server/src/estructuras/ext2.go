@@ -67,7 +67,7 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 	sb.S_first_blo += sb.S_block_size
 
 	// ----------- Creamos /users.txt -----------
-	usersText := "1,G,root\n1,U,root,123\n"
+	usersText := "1,G,root\n1,U,root,root,123\n"
 
 	// Deserializar el inodo raíz
 	err = rootInode.Deserialize(path, int64(sb.S_inode_start+0)) // 0 porque es el inodo raíz

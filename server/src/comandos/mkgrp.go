@@ -1,9 +1,12 @@
 package analyzer
 
 import (
+	stores "bakend/src/almacenamiento"
+	structures "bakend/src/estructuras"
 	"errors"
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -65,5 +68,169 @@ func ParseMkgrp(tokens []string) (*MKGRP, error) {
 }
 
 func commandMkgrp(comando *MKGRP) error {
+	//Obtenemos el usuario logeado
+	var usuario = ObtenerUsuari()
 
+	//Valida si el usuario es el usuario root
+	if usuario.user != "root" {
+		return errors.New("para crear un grupo debe se estar logeado como root")
+	}
+
+	// Obtener la partición montada
+	//Tipo de retorno: (*structures.SuperBlock, *structures.PARTITION, string, error)
+	partitionSuperblock, _, partitionPath, err := stores.GetMountedPartitionSuperblock(usuario.id)
+	if err != nil {
+		return fmt.Errorf("error al obtener el Superbloque: %w", err)
+	}
+
+	//Aca iniciamos desde el inodo numero 1
+	err2 := MkgprComand(partitionPath, usuario, comando, 1, partitionSuperblock)
+
+	//validar la salida
+	if err2 != nil {
+		return fmt.Errorf("error al intenter escribir en el user.txt: %w", err2)
+	}
+
+	return nil
+}
+
+// Funcion para accder al archivo de user.txt
+// CrearUser: path del disco, objeto con los datos del usuario, el inicio de los inodos
+func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb *structures.SuperBlock) error {
+	//Se crea una instancia de un objeto de tipo Inode
+	inode := &structures.Inode{}
+
+	// Deserializar el inodo
+	err := inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+	if err != nil {
+		return err
+	}
+
+	//Aca se almacenara el contenido de user.txt
+	data := ""
+	// Crear un nuevo bloque de archivo
+	block := &structures.FileBlock{}
+	indiceFinal := 0
+	// Iterar sobre cada bloque del inodo (apuntadores)
+	for indiceList, blockIndex := range inode.I_block {
+		// Si el bloque no existe, salir
+		if blockIndex == -1 {
+			break
+		}
+		indiceFinal = int(blockIndex)
+		// Crear un nuevo bloque de archivo
+		block = &structures.FileBlock{}
+
+		// Deserializar el bloque desde el incio de los blokes  + posicion por el peso de los bloques  que es 64
+		err := block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size))) // 64 porque es el tamaño de un bloque
+		if err != nil {
+			return err
+		}
+
+		//Obtengo el texto del archivo uset.txt, de un fileblock
+		data = strings.Trim(string(block.B_content[:]), "\x00 ")
+
+		/*
+			1,G,root
+			1,U,root,root,123
+		*/
+		// Dividir por salto de línea
+		lines := strings.Split(data, "\n")
+		// Recorrer cada línea y dividir por comas
+		var id = ""
+		var tipo = ""
+		var nombre = ""
+
+		//Esto es para obtner los datos puntuales
+		for _, line := range lines {
+			values := strings.Split(line, ",")
+
+			// Almacenar en variables según la cantidad de datos
+			//Esto son los grupos
+			if len(values) == 3 {
+				id, tipo, nombre = values[0], values[1], values[2]
+				if nombre == comando.name {
+					return fmt.Errorf("error ya existe otro usuario: %s", nombre)
+				}
+				//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s\n", id, tipo, nombre)
+			}
+		}
+
+		//Esto solo es para comvertirlo a numero
+		num, err := strconv.Atoi(id)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return err
+		}
+
+		//Sumamos uno al grupo ya existente
+		int32Num := int32(num)
+		int32Num += 1
+		nuevoUsuario := strconv.Itoa(int(int32Num)) + "," + tipo + "," + nombre + "\n"
+
+		//Aca debo de validar que el indice no se salga de 14
+		if indiceList+1 == 15 {
+			//Aca si llegamos al ultimo inodo y esta llena el FileBlock
+			if len(data) >= 64 {
+				return errors.New("ya no existe espacio para crear mas grupos")
+				//Aca valido si la suma del nuevo grupo supera los 64 bytes
+			} else if (len(data) + len(nuevoUsuario)) >= 64 {
+				return errors.New("ya no existe espacio en el ultimo bloque para crear mas grupos")
+				//Aca se agrega el nuevo grupo
+			} else {
+				//Unicamente se debe de agergar el grupo y detener el programa
+				//Se agrega a la cadena principal
+				data += nuevoUsuario
+
+				//Sustituir los datos anteriores por los nuevos
+				// Copiamos el texto de usuarios en el bloque
+				copy(block.B_content[:], data)
+
+				//Se serealiza todo el contenido en el Fileblock
+				err2 := block.Serialize(path, int64(sb.S_block_start+(int32(indiceFinal)*sb.S_block_size)))
+				if err2 != nil {
+					return err2
+				}
+				break
+			}
+		}
+
+		//validar si el bloque esta lleno ó si la suma del nuevo texto supera el espacio de 64 bytes
+		if len(data) >= 64 {
+			//Aca el sigueinte bloque esta basillo
+			if inode.I_block[indiceList+1] == -1 {
+				//Aca se debe de generar un nuevo FileBlock
+				//TODO: pendiente
+			} else {
+				//Aca necesito avanzar al sigueinte bloque
+			}
+		} else if (len(data) + len(nuevoUsuario)) >= 64 {
+			//Validamos si el nuevo usuario mas el texto anterior no se pase de 64 bytes
+			//Validamos que el sigueinte iblock esta basillo y si si lo creamos
+			if inode.I_block[indiceList+1] == -1 {
+				//Aca se debe de generar un nuevo FileBlock
+				//TODO: pendiente
+			} else {
+				//Aca necesito avanzar al sigueinte bloque
+			}
+		} else {
+			//Aca quiere decir que ya puedo agregar el nuevo grupo al fileblock y finalizo el bucle
+			//Se agrega a la cadena principal
+			data += nuevoUsuario
+
+			//Sustituir los datos anteriores por los nuevos
+			// Copiamos el texto de usuarios en el bloque
+			copy(block.B_content[:], data)
+
+			//Se serealiza todo el contenido en el Fileblock
+			err2 := block.Serialize(path, int64(sb.S_block_start+(int32(indiceFinal)*sb.S_block_size)))
+			if err2 != nil {
+				return err2
+			}
+			break
+		}
+
+	}
+
+	return nil
 }

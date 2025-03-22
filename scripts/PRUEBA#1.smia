@@ -35,3 +35,6 @@ mounted
 
 #------Reporte: MBR y EBR Disco1.mia
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte2.jpg -name=mbr
+
+#------Comando para agregar un grupo a user.txt (MKGRP)
+mkgrp -name=usuarios

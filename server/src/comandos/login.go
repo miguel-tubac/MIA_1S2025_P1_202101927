@@ -26,10 +26,10 @@ type LOGIN struct {
 */
 
 var logeado = false
+var cmd = &LOGIN{} // Crea una nueva instancia de LOGIN
 
 // Commando para validar el login
 func ParseLogin(tokens []string) (*LOGIN, error) {
-	cmd := &LOGIN{} // Crea una nueva instancia de LOGIN
 
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
 	args := strings.Join(tokens, " ")
@@ -105,20 +105,21 @@ func commandLogear(login *LOGIN) error {
 	//Tipo de retorno: (*structures.SuperBlock, *structures.PARTITION, string, error)
 	partitionSuperblock, _, partitionPath, err := stores.GetMountedPartitionSuperblock(login.id)
 	if err != nil {
-		return fmt.Errorf("error al obtener la partición montada: %w", err)
+		return fmt.Errorf("error al obtener el Superbloque en el Login: %w", err)
 	}
 
 	//Aca iniciamos desde el inodo numero 1
 	err2 := Login(partitionPath, login, 1, partitionSuperblock)
 
-	//TODO: validar la salida
+	//validar la salida
 	if err2 != nil {
-		return fmt.Errorf("error al obtener el suuario y contraseña: %w", err2)
+		return fmt.Errorf("error al obtener el usuario y contraseña: %w", err2)
 	}
 
 	return nil
 }
 
+// TODO: validar si es usuario y si no esta eliminado, tambien si no esta en otro bloque
 // Funcion para accder al archivo de user.txt
 // Login: path del disco, objeto con los datos del usuario, el inicio de los inodos
 func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBlock) error {
@@ -155,8 +156,8 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 	}
 
 	/*
-		1,G,root
-		1,U,root,123
+		1, G, root
+		1, U, root, root, 123
 	*/
 
 	// Dividir por salto de línea
@@ -170,9 +171,9 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 		if len(values) == 3 {
 			//id, tipo, nombre := values[0], values[1], values[2]
 			//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s\n", id, tipo, nombre)
-		} else if len(values) == 4 {
+		} else if len(values) == 5 {
 			//Estos son los usuarios
-			_, _, nombre, extra := values[0], values[1], values[2], values[3]
+			_, _, _, nombre, extra := values[0], values[1], values[2], values[3], values[4]
 			if nombre == login.user && extra == login.pass {
 				logeado = true
 				//fmt.Println("Logeado")
@@ -192,6 +193,10 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 func Logout(tokens []string) (*LOGIN, error) {
 	if logeado {
 		logeado = false
+		//Se reinician las credenciales del usuario logeado
+		cmd.id = ""
+		cmd.pass = ""
+		cmd.user = ""
 		return nil, errors.New("usuario loslogeado")
 	}
 
@@ -204,4 +209,9 @@ func ObtenerLogin() bool {
 
 func SetearLogin() {
 	logeado = false
+}
+
+// Funcion para obtener el usuario logeado
+func ObtenerUsuari() *LOGIN {
+	return cmd
 }

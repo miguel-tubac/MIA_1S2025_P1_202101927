@@ -45,4 +45,14 @@ mkgrp -name=usuarios5
 
 #------Comando para eliminar un grupo
 rmgrp -name=usuarios5
-mkgrp -name=usuarios6
+
+#------Crea usuario user1 en el grupo usuarios
+mkusr -user=user1 -pass=usuario -grp=usuarios
+mkusr -user=user12 -pass=usuario -grp=usuarios
+
+#------Elimina el usuario user1
+rmusr -user=user1
+
+validar user
+#------Cambia el grupo del user2
+chgrp -user=user2 -grp=grupo1

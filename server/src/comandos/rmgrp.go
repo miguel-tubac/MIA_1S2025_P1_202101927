@@ -137,7 +137,7 @@ func RmgrpComand(path string, login *LOGIN, comando *RMGRP, inodeIndex int32, sb
 		// Dividir por salto de línea
 		lines := strings.Split(data, "\n")
 		// Recorrer cada línea y dividir por comas
-		// var id = ""
+		var id = ""
 		var tipo = ""
 		var nombre = ""
 
@@ -152,8 +152,12 @@ func RmgrpComand(path string, login *LOGIN, comando *RMGRP, inodeIndex int32, sb
 			// Almacenar en variables según la cantidad de datos
 			//Esto son los grupos
 			if len(values) == 3 {
-				_, tipo, nombre = values[0], values[1], values[2]
+				id, tipo, nombre = values[0], values[1], values[2]
 				if nombre == comando.name {
+					//Esto quiere decir que ya esta borrado
+					if id == "0" {
+						return fmt.Errorf("el grupo con el name: %s ya fue borrado", comando.name)
+					}
 					encontrado = true
 					//Se edita el id del grupo
 					result += "0," + tipo + "," + nombre + "\n"

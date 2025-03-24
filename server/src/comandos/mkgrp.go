@@ -67,7 +67,12 @@ func ParseMkgrp(tokens []string) (*MKGRP, error) {
 	return cmd, fmt.Errorf("grupo de usuarios creado: %+v", *cmd)
 }
 
+var respaldoId2 = ""
+var tipo2 = ""
+
 func commandMkgrp(comando *MKGRP) error {
+	respaldoId2 = ""
+	tipo2 = ""
 	//Obtenemos el usuario logeado
 	var usuario = ObtenerUsuari()
 
@@ -138,9 +143,8 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 		lines := strings.Split(data, "\n")
 		// Recorrer cada línea y dividir por comas
 		var id = ""
-		var tipo = ""
 		var nombre = ""
-		var respaldoId = ""
+
 		//Esto es para obtner los datos puntuales
 		for _, line := range lines {
 			values := strings.Split(line, ",")
@@ -148,10 +152,10 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 			// Almacenar en variables según la cantidad de datos
 			//Esto son los grupos
 			if len(values) == 3 {
-				id, tipo, nombre = values[0], values[1], values[2]
+				id, tipo2, nombre = values[0], values[1], values[2]
 				//Esto quiere decir que el grupo esta elimando por lo tanto guradomos el correcto
 				if id != "0" {
-					respaldoId = id
+					respaldoId2 = id
 				}
 				if nombre == comando.name {
 					return fmt.Errorf("error ya existe otro usuario: %s", nombre)
@@ -161,7 +165,7 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 		}
 
 		//Esto solo es para comvertirlo a numero
-		num, err := strconv.Atoi(respaldoId)
+		num, err := strconv.Atoi(respaldoId2)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return err
@@ -170,7 +174,7 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 		//Sumamos uno al grupo ya existente
 		int32Num := int32(num)
 		int32Num += 1
-		nuevoUsuario := strconv.Itoa(int(int32Num)) + "," + tipo + "," + comando.name + "\n"
+		nuevoUsuario := strconv.Itoa(int(int32Num)) + "," + tipo2 + "," + comando.name + "\n"
 
 		//Aca debo de validar que el indice no se salga de 14
 		if indiceList+1 == 15 {

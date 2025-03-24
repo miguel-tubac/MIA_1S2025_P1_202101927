@@ -158,6 +158,30 @@ func Analyzer(input string) ([]interface{}, []error) {
 				// Si el comando no es reconocido, agregamos el error
 				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"rmgrp\": %s", tokens[0]))
 			}
+		case "mkusr":
+			if comandos.ObtenerLogin() {
+				result, err := comandos.ParseMkusr(tokens[1:])
+				results = append(results, result)
+				//results = append(results, "\n")
+				if err != nil {
+					errors = append(errors, err)
+				}
+			} else {
+				// Si el comando no es reconocido, agregamos el error
+				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mkusr\": %s", tokens[0]))
+			}
+		case "rmusr":
+			if comandos.ObtenerLogin() {
+				result, err := comandos.ParseRmusr(tokens[1:])
+				results = append(results, result)
+				//results = append(results, "\n")
+				if err != nil {
+					errors = append(errors, err)
+				}
+			} else {
+				// Si el comando no es reconocido, agregamos el error
+				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"rmusr\": %s", tokens[0]))
+			}
 		default:
 			// Si el comando no es reconocido, agregamos el error
 			errors = append(errors, fmt.Errorf("comando desconocido: %s", tokens[0]))

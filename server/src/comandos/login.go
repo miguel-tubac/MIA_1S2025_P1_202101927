@@ -151,7 +151,7 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 		}
 
 		//Obtengo el texto del archivo uset.txt
-		data = strings.Trim(string(block.B_content[:]), "\x00 ")
+		data += strings.Trim(string(block.B_content[:]), "\x00 ")
 
 	}
 
@@ -173,7 +173,12 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 			//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s\n", id, tipo, nombre)
 		} else if len(values) == 5 {
 			//Estos son los usuarios
-			_, _, _, nombre, extra := values[0], values[1], values[2], values[3], values[4]
+			numeral, _, _, nombre, extra := values[0], values[1], values[2], values[3], values[4]
+			//Esto valida que el usuario no este eliminado
+			if numeral == "0" {
+				logeado = false
+				return fmt.Errorf("error con el suario: %s este ya se encuntra eliminado", nombre)
+			}
 			if nombre == login.user && extra == login.pass {
 				logeado = true
 				//fmt.Println("Logeado")

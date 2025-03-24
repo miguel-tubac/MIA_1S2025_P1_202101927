@@ -38,3 +38,11 @@ mounted
 
 #------Comando para agregar un grupo a user.txt (MKGRP)
 mkgrp -name=usuarios
+mkgrp -name=usuarios2
+mkgrp -name=usuarios3
+mkgrp -name=usuarios4
+mkgrp -name=usuarios5
+
+#------Comando para eliminar un grupo
+rmgrp -name=usuarios5
+mkgrp -name=usuarios6

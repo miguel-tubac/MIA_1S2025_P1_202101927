@@ -183,7 +183,7 @@ func (mbr *MBR) GetExtendedPartition() bool {
 
 		// Si el nombre de la partición coincide, devolver la partición y el índice
 		if strings.EqualFold(partitionType, "E") {
-			fmt.Println("Ya existe una particion extendida")
+			//fmt.Println("Ya existe una particion extendida")
 			return true
 		}
 	}
@@ -200,7 +200,7 @@ func (mbr *MBR) GetExtendedPartition2() *PARTITION {
 		//fmt.Println(partitionType)
 		// Si el nombre de la partición coincide, devolver la partición y el índice
 		if strings.EqualFold(partitionType, "E") {
-			fmt.Println("Ya existe una particion extendida")
+			//fmt.Println("Ya existe una particion extendida")
 			return &partition
 		}
 	}

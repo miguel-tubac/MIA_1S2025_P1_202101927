@@ -140,7 +140,7 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 		var id = ""
 		var tipo = ""
 		var nombre = ""
-
+		var respaldoId = ""
 		//Esto es para obtner los datos puntuales
 		for _, line := range lines {
 			values := strings.Split(line, ",")
@@ -149,6 +149,10 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 			//Esto son los grupos
 			if len(values) == 3 {
 				id, tipo, nombre = values[0], values[1], values[2]
+				//Esto quiere decir que el grupo esta elimando por lo tanto guradomos el correcto
+				if id != "0" {
+					respaldoId = id
+				}
 				if nombre == comando.name {
 					return fmt.Errorf("error ya existe otro usuario: %s", nombre)
 				}
@@ -157,7 +161,7 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 		}
 
 		//Esto solo es para comvertirlo a numero
-		num, err := strconv.Atoi(id)
+		num, err := strconv.Atoi(respaldoId)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return err
@@ -166,7 +170,7 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 		//Sumamos uno al grupo ya existente
 		int32Num := int32(num)
 		int32Num += 1
-		nuevoUsuario := strconv.Itoa(int(int32Num)) + "," + tipo + "," + nombre + "\n"
+		nuevoUsuario := strconv.Itoa(int(int32Num)) + "," + tipo + "," + comando.name + "\n"
 
 		//Aca debo de validar que el indice no se salga de 14
 		if indiceList+1 == 15 {
@@ -201,6 +205,27 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 			if inode.I_block[indiceList+1] == -1 {
 				//Aca se debe de generar un nuevo FileBlock
 				//TODO: pendiente
+				//Primero se actualiza el ibloque
+				inode.I_block[indiceList+1] = blockIndex + 1
+				//Serealizar el ibloque actualizado
+				// Deserializar el inodo
+				err := inode.Serialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+				if err != nil {
+					return err
+				}
+				//Generamos el nuevo Filebloque
+				nuevoFilebloque := &structures.FileBlock{}
+				// Copiamos el texto de usuarios en el bloque
+				copy(nuevoFilebloque.B_content[:], nuevoUsuario)
+				//Se serealiza todo el contenido en el Fileblock
+				//					inicio de la tabla de bloques + (indice +1* temaño del bloque)
+				err2 := nuevoFilebloque.Serialize(path, int64(sb.S_block_start+(int32(indiceFinal+1)*sb.S_block_size)))
+				if err2 != nil {
+					return err2
+				}
+				// fmt.Println("**********")
+				// nuevoFilebloque.Print()
+				break
 			} else {
 				//Aca necesito avanzar al sigueinte bloque
 			}
@@ -210,6 +235,26 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 			if inode.I_block[indiceList+1] == -1 {
 				//Aca se debe de generar un nuevo FileBlock
 				//TODO: pendiente
+				//Primero se actualiza el ibloque
+				inode.I_block[indiceList+1] = blockIndex + 1
+				//Serealizar el ibloque actualizado
+				// Deserializar el inodo
+				err := inode.Serialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+				if err != nil {
+					return err
+				}
+				//Generamos el nuevo Filebloque
+				nuevoFilebloque := &structures.FileBlock{}
+				// Copiamos el texto de usuarios en el bloque
+				copy(nuevoFilebloque.B_content[:], nuevoUsuario)
+				//Se serealiza todo el contenido en el Fileblock
+				//					inicio de la tabla de bloques + (indice +1* temaño del bloque)
+				err2 := nuevoFilebloque.Serialize(path, int64(sb.S_block_start+(int32(indiceFinal+1)*sb.S_block_size)))
+				if err2 != nil {
+					return err2
+				}
+				// fmt.Println("**********")
+				// nuevoFilebloque.Print()
 			} else {
 				//Aca necesito avanzar al sigueinte bloque
 			}
@@ -227,10 +272,14 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 			if err2 != nil {
 				return err2
 			}
+			// fmt.Println("**********")
+			// block.Print()
 			break
 		}
 
 	}
+
+	//block.Print()
 
 	return nil
 }

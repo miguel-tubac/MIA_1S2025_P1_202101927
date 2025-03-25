@@ -181,8 +181,8 @@ func RmuserComand(path string, login *LOGIN, comando *RMUSR, inodeIndex int32, s
 			if err2 != nil {
 				return err2
 			}
-			fmt.Println("**********")
-			block.Print()
+			// fmt.Println("**********")
+			// block.Print()
 			//Finalizamos el bucle
 			break
 		}

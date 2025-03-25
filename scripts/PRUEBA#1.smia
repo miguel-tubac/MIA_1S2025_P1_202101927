@@ -53,6 +53,6 @@ mkusr -user=user12 -pass=usuario -grp=usuarios
 #------Elimina el usuario user1
 rmusr -user=user1
 
-validar user
+
 #------Cambia el grupo del user2
-chgrp -user=user2 -grp=grupo1
+chgrp -user=user12 -grp=usuarios4

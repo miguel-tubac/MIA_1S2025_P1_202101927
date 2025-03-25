@@ -157,8 +157,8 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 				if id != "0" {
 					respaldoId2 = id
 				}
-				if nombre == comando.name {
-					return fmt.Errorf("error ya existe otro usuario: %s", nombre)
+				if nombre == comando.name && id != "0" {
+					return fmt.Errorf("error ya existe otro grupo: %s", nombre)
 				}
 				//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s\n", id, tipo, nombre)
 			}

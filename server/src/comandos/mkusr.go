@@ -188,11 +188,13 @@ func MkusrComand(path string, login *LOGIN, comando *MKUSR, inodeIndex int32, sb
 				// if grupo == comando.grp {
 				// 	existeGrupo = false
 				// }
-				if usuario == comando.user {
+				//Aca se valida si el usuario ya esta pero tambien si no esta eliminado
+				if usuario == comando.user && id != "0" {
 					return fmt.Errorf("error ya existe otro usuario: %s", usuario)
 				}
 				//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s\n", id, tipo, nombre)
 			}
+
 		}
 
 		// if existeGrupo {

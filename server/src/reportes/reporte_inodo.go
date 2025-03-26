@@ -22,6 +22,7 @@ func ReportInode(superblock *structures.SuperBlock, diskPath string, path string
 
 	// Iniciar el contenido DOT
 	dotContent := `digraph G {
+		rankdir=LR;
         node [shape=plaintext]
     `
 

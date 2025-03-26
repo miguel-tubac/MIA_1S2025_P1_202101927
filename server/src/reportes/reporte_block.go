@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 // ReportInode genera un reporte de un inodo y lo guarda en la ruta especificada
@@ -22,6 +21,7 @@ func ReportBlock(superblock *structures.SuperBlock, diskPath string, path string
 
 	// Iniciar el contenido DOT
 	dotContent := `digraph G {
+	rankdir=LR;
 	node [shape=plaintext]
 	`
 	var uniones []string
@@ -37,70 +37,75 @@ func ReportBlock(superblock *structures.SuperBlock, diskPath string, path string
 		}
 
 		// Iterar sobre cada bloque del inodo (apuntadores)
-		for _, blockIndex := range inode.I_block {
+		for indice, blockIndex := range inode.I_block {
 			// Si el bloque no existe, salir
 			if blockIndex == -1 {
 				break
 			}
-			//TODO: validar los apuntadores 13,14,15
+			//TODO: validar los apuntadores 12,13,14 que esta en el indice del 13 al 15
+			//Bloque simple indirecto
+			if indice == 12 {
 
-			// Si el inodo es de tipo carpeta
-			if inode.I_type[0] == '0' {
-				block := &structures.FolderBlock{}
-				// Deserializar el bloque
-				err := block.Deserialize(diskPath, int64(superblock.S_block_start+(blockIndex*superblock.S_block_size))) // 64 porque es el tamaño de un bloque
-				if err != nil {
-					return err
-				}
-				//Aca se valida si el folderBlock esta ocupado
-				existeElBloque := true
-				//Se recorre el contenido
-				for _, content := range block.B_content {
-					// Se obtiene el nombre y se eliminan caracteres nulos
-					name := strings.TrimRight(string(content.B_name[:]), "\x00")
-					if name == "-" && content.B_inodo == -1 {
-						existeElBloque = false
+				//Bloque doble indirecto
+			} else if indice == 13 {
+
+				//Bloque triple indirecto
+			} else if indice == 14 {
+
+				//Estos son los demas bloques
+			} else {
+				// Si el inodo es de tipo carpeta
+				if inode.I_type[0] == '0' {
+					block := &structures.FolderBlock{}
+					// Deserializar el bloque
+					err := block.Deserialize(diskPath, int64(superblock.S_block_start+(blockIndex*superblock.S_block_size))) // 64 porque es el tamaño de un bloque
+					if err != nil {
+						return err
 					}
-				}
-				//Se valida si el bloque existe
-				if existeElBloque {
+					//Aca se valida si el folderBlock esta ocupado
+					//Se recorre el contenido
+					if string(block.B_content[2].B_name[:]) != "-" && block.B_content[2].B_inodo != -1 {
+						//Se valida si el bloque existe
+						// Definir el contenido DOT para el inodo actual
+						dotContent += fmt.Sprintf(`bloque%d [label=<
+							<table border="0" cellborder="1" cellspacing="0">`, blockIndex)
+						//Aca esta el contenido
+						dotContent += fmt.Sprintf(`
+							<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE %d </font></td></tr>`, blockIndex)
+						//Obtinen el dot de un bloque de carpeta
+						dotContent += block.ObtenerDot()
+						//Aca se agrega el final del bloque
+						dotContent += "	</table>>];\n"
+						//Esta lista es para unir los bloques
+						uniones = append(uniones, fmt.Sprintf("bloque%d", blockIndex))
+					}
+
+					// Si el inodo es de tipo archivo
+				} else if inode.I_type[0] == '1' {
+					block := &structures.FileBlock{}
+					// Deserializar el bloque
+					err := block.Deserialize(diskPath, int64(superblock.S_block_start+(blockIndex*superblock.S_block_size))) // 64 porque es el tamaño de un bloque
+					if err != nil {
+						return err
+					}
 					// Definir el contenido DOT para el inodo actual
 					dotContent += fmt.Sprintf(`bloque%d [label=<
 					<table border="0" cellborder="1" cellspacing="0">`, blockIndex)
-					//Aca esta el contenido
-					dotContent += fmt.Sprintf(`
-					<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE %d </font></td></tr>`, blockIndex)
-					//Obtinen el dot de un bloque de carpeta
+					// Obtiene el bloque
 					dotContent += block.ObtenerDot()
 					//Aca se agrega el final del bloque
 					dotContent += "	</table>>];\n"
 					//Esta lista es para unir los bloques
 					uniones = append(uniones, fmt.Sprintf("bloque%d", blockIndex))
+					//continue
 				}
-				// Si el inodo es de tipo archivo
-			} else if inode.I_type[0] == '1' {
-				block := &structures.FileBlock{}
-				// Deserializar el bloque
-				err := block.Deserialize(diskPath, int64(superblock.S_block_start+(blockIndex*superblock.S_block_size))) // 64 porque es el tamaño de un bloque
-				if err != nil {
-					return err
-				}
-				// Definir el contenido DOT para el inodo actual
-				dotContent += fmt.Sprintf(`bloque%d [label=<
-				<table border="0" cellborder="1" cellspacing="0">`, blockIndex)
-				// Obtiene el bloque
-				dotContent += block.ObtenerDot()
-				//Aca se agrega el final del bloque
-				dotContent += "	</table>>];\n"
-				//Esta lista es para unir los bloques
-				uniones = append(uniones, fmt.Sprintf("bloque%d", blockIndex))
-				//continue
 			}
 			//Fin del i_bloque
 		}
 		//Aca cambia de inodo por lo tanto no debe de estar enlazado
 	}
 
+	//Aca se generan los enlaces de los bloques
 	for i := 0; i < len(uniones); i++ {
 		//Aca es cuando llega al final no agregar el enlace
 		if i != len(uniones)-1 {

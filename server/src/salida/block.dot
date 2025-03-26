@@ -1,35 +1,45 @@
 digraph G {
+	rankdir=LR;
 	node [shape=plaintext]
 	bloque0 [label=<
-					<table border="0" cellborder="1" cellspacing="0">
-					<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 0 </font></td></tr>
+							<table border="0" cellborder="1" cellspacing="0">
+							<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 0 </font></td></tr>
 	<tr><td>b_name</td><td>b_inodo</td></tr>
 	<tr><td>.</td><td>0</td></tr>
 	<tr><td>..</td><td>0</td></tr>
 	<tr><td>users.txt</td><td>1</td></tr>
 	<tr><td>home</td><td>2</td></tr>	</table>>];
 bloque1 [label=<
-				<table border="0" cellborder="1" cellspacing="0">
+					<table border="0" cellborder="1" cellspacing="0">
 		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
 		<tr><td colspan="2"> 1,G,root<br/>1,U,root,root,123<br/>2,G,usuarios<br/>3,G,usuarios2<br/> </td></tr>	</table>>];
 bloque2 [label=<
-				<table border="0" cellborder="1" cellspacing="0">
+					<table border="0" cellborder="1" cellspacing="0">
 		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
 		<tr><td colspan="2"> 4,G,usuarios3<br/>5,G,usuarios4<br/>0,G,usuarios5<br/><br/> </td></tr>	</table>>];
 bloque3 [label=<
-				<table border="0" cellborder="1" cellspacing="0">
+					<table border="0" cellborder="1" cellspacing="0">
 		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
 		<tr><td colspan="2"> 0,U,usuarios,user1,usuario<br/>3,U,usuarios4,user12,usuario<br/><br/><br/> </td></tr>	</table>>];
 bloque4 [label=<
-					<table border="0" cellborder="1" cellspacing="0">
-					<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 4 </font></td></tr>
+							<table border="0" cellborder="1" cellspacing="0">
+							<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 4 </font></td></tr>
 	<tr><td>b_name</td><td>b_inodo</td></tr>
 	<tr><td>.</td><td>2</td></tr>
 	<tr><td>..</td><td>0</td></tr>
 	<tr><td>usac</td><td>3</td></tr>
 	<tr><td>work</td><td>4</td></tr>	</table>>];
+bloque5 [label=<
+							<table border="0" cellborder="1" cellspacing="0">
+							<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 5 </font></td></tr>
+	<tr><td>b_name</td><td>b_inodo</td></tr>
+	<tr><td>.</td><td>3</td></tr>
+	<tr><td>..</td><td>2</td></tr>
+	<tr><td>mia</td><td>5</td></tr>
+	<tr><td>-</td><td>-1</td></tr>	</table>>];
 bloque0 -> bloque1
 bloque1 -> bloque2
 bloque2 -> bloque3
 bloque3 -> bloque4
+bloque4 -> bloque5
 }

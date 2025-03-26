@@ -83,7 +83,7 @@ func commandMkdir(mkdir *MKDIR) error {
 	}
 
 	// Crear el directorio
-	err = createDirectory(mkdir.path, partitionSuperblock, partitionPath, mountedPartition)
+	err = createDirectory(mkdir, partitionSuperblock, partitionPath, mountedPartition)
 	if err != nil {
 		err = fmt.Errorf("error al crear el directorio: %w", err)
 	}
@@ -91,35 +91,64 @@ func commandMkdir(mkdir *MKDIR) error {
 	return err
 }
 
-func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.PARTITION) error {
+func createDirectory(mkdir *MKDIR, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.PARTITION) error {
 	//fmt.Println("\nCreando directorio:", dirPath)
 
 	// GetParentDirectories obtiene las carpetas padres y el directorio de destino
-	parentDirs, destDir := utils.GetParentDirectories(dirPath)
-	//fmt.Println("\nDirectorios padres:", parentDirs)
-	//fmt.Println("Directorio destino:", destDir)
+	parentDirs, destDir := utils.GetParentDirectories(mkdir.path)
+	// fmt.Println("\nDirectorios padres:", parentDirs)
+	// fmt.Println("Directorio destino:", destDir)
 
-	// Crear el directorio segun el path proporcionado
-	err := sb.CreateFolder(partitionPath, parentDirs, destDir)
-	if err != nil {
-		return fmt.Errorf("error al crear el directorio: %w", err)
+	if mkdir.p {
+		//Directorios padres: parentsDir == [home user docs]
+		//Directorio destino: destDir = usac
+		parentDirs = append(parentDirs, destDir)
+		//fmt.Println(len(parentDirs))
+		var nuevo []string
+
+		// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+		for i := 0; i < len(parentDirs); i++ {
+			destDir = parentDirs[i]
+
+			// Asegurar que nuevo no se modifique dentro de CreateFolder
+			tempNuevo := append([]string{}, nuevo...)
+
+			// Crear el directorio segun el path proporcionado
+			err := sb.CreateFolder(partitionPath, tempNuevo, destDir)
+			if err != nil {
+				return fmt.Errorf("error al crear el directorio: %w", err)
+			}
+
+			// Serializar el superbloque
+			err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
+			if err != nil {
+				return fmt.Errorf("error al serializar el superbloque: %w", err)
+			}
+
+			// fmt.Println("********agregado***********")
+			// fmt.Println(nuevo)
+			// fmt.Println(destDir)
+			nuevo = append(nuevo, destDir)
+		}
+		//Aca es cuando el parametro -p no se especifica
+	} else {
+		// Crear el directorio segun el path proporcionado
+		err := sb.CreateFolder(partitionPath, parentDirs, destDir)
+		if err != nil {
+			return fmt.Errorf("error al crear el directorio: %w", err)
+		}
+
+		// Imprimir inodos y bloques
+		// sb.PrintInodes(partitionPath)
+		// sb.PrintBlocks(partitionPath)
+
+		// Serializar el superbloque
+		err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
+		if err != nil {
+			return fmt.Errorf("error al serializar el superbloque: %w", err)
+		}
+
 	}
 
-	// Imprimir inodos y bloques
-	// sb.PrintInodes(partitionPath)
-	// sb.PrintBlocks(partitionPath)
-
-	// Serializar el superbloque
-	err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
-	if err != nil {
-		return fmt.Errorf("error al serializar el superbloque: %w", err)
-	}
-
-	// fmt.Println("*****************")
-	// sb.Print()
-	// fmt.Println("*****************")
-	// // Imprimir inodos y bloques
-	// sb.PrintInodes(partitionPath)
-	// sb.PrintBlocks(partitionPath)
 	return nil
 }

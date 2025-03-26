@@ -60,9 +60,9 @@ func ParseRep(tokens []string) (*REP, error) {
 			//Convertimos todo a minuscula
 			value = strings.ToLower(value)
 			// Verifica que el nombre sea uno de los valores permitidos
-			validNames := []string{"mbr", "disk", "inode", "block", "bm_inode", "bm_block", "sb", "file", "ls"}
+			validNames := []string{"mbr", "disk", "inode", "block", "bm_inode", "bm_bloc", "sb", "file", "ls"}
 			if !contains(validNames, value) {
-				return nil, errors.New("nombre inválido, debe ser uno de los siguientes: mbr, disk, inode, block, bm_inode, bm_block, sb, file, ls")
+				return nil, errors.New("nombre inválido, debe ser uno de los siguientes: mbr, disk, inode, block, bm_inode, bm_bloc, sb, file, ls")
 			}
 			cmd.name = value
 		case "-path_file_ls":
@@ -74,8 +74,14 @@ func ParseRep(tokens []string) (*REP, error) {
 	}
 
 	// Verifica que los parámetros obligatorios hayan sido proporcionados
-	if cmd.id == "" || cmd.path == "" || cmd.name == "" {
-		return nil, errors.New("faltan parámetros requeridos: -id, -path, -name")
+	if cmd.id == "" {
+		return nil, errors.New("faltan parámetros requeridos: -id")
+	}
+	if cmd.path == "" {
+		return nil, errors.New("faltan parámetros requeridos: -path")
+	}
+	if cmd.name == "" {
+		return nil, errors.New("faltan parámetros requeridos: -name")
 	}
 
 	// Aquí se puede agregar la lógica para ejecutar el comando rep con los parámetros proporcionados
@@ -141,7 +147,15 @@ func commandRep(rep *REP) error {
 			return err
 		}
 		//Rerornamos el mensaje de satisfacion
-		return fmt.Errorf("imagen del BM_INODE generada: %s", rep.path)
+		return fmt.Errorf("reporte (txt) del BM_INODE generado: %s", rep.path)
+	case "bm_bloc":
+		err = reports.ReportBMBloc(mountedSb, mountedDiskPath, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("reporte (txt) del BM_Block generado: %s", rep.path)
 	}
 
 	return nil

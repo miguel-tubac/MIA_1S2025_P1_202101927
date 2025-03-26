@@ -363,6 +363,16 @@ func (sb *SuperBlock) PrintBlocks(path string) error {
 // CreateFolder crea una carpeta en el sistema de archivos
 func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir string) error {
 	//fmt.Println(parentsDir)
+	//Aca se valida si el parametro p
+	//Aca indica que se debe de crear todas las carpetas
+
+	/*
+		Directorios padres: []
+		Directorio destino: home
+
+		Directorios padres: [home]
+		Directorio destino: usac
+	*/
 	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
 	if len(parentsDir) == 0 {
 		return sb.createFolderInInode(path, 0, parentsDir, destDir)
@@ -376,5 +386,6 @@ func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir str
 		}
 	}
 	//sb.Print()
+
 	return nil
 }

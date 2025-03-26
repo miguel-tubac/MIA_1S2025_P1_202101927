@@ -54,7 +54,11 @@ rmusr -user=user1
 chgrp -user=user12 -grp=usuarios4
 
 #------Crea la carpeta usac, si no existen las carpetas home user o docs se crean
-mkdir -p -path=/home/user/docs/usac
+#mkdir -p -path=/home/user/docs/usac
+mkdir -path="/home"
+mkdir -path="/home/usac"
+mkdir -path="/home/work"
+mkdir -path="/home/usac/mia"
 
 #------Reporte: INODO Disco1.mia
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode

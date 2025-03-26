@@ -83,13 +83,13 @@ func commandMkgrp(comando *MKGRP) error {
 
 	// Obtener la partición montada
 	//Tipo de retorno: (*structures.SuperBlock, *structures.PARTITION, string, error)
-	partitionSuperblock, _, partitionPath, err := stores.GetMountedPartitionSuperblock(usuario.id)
+	partitionSuperblock, particion, partitionPath, err := stores.GetMountedPartitionSuperblock(usuario.id)
 	if err != nil {
 		return fmt.Errorf("error al obtener el Superbloque: %w", err)
 	}
 
 	//Aca iniciamos desde el inodo numero 1
-	err2 := MkgprComand(partitionPath, usuario, comando, 1, partitionSuperblock)
+	err2 := MkgprComand(partitionPath, usuario, comando, 1, partitionSuperblock, particion)
 
 	//validar la salida
 	if err2 != nil {
@@ -101,7 +101,7 @@ func commandMkgrp(comando *MKGRP) error {
 
 // Funcion para accder al archivo de user.txt
 // CrearUser: path del disco, objeto con los datos del usuario, el inicio de los inodos
-func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb *structures.SuperBlock) error {
+func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb *structures.SuperBlock, mountedPartition *structures.PARTITION) error {
 	//Se crea una instancia de un objeto de tipo Inode
 	inode := &structures.Inode{}
 
@@ -227,6 +227,21 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 				if err2 != nil {
 					return err2
 				}
+				// Actualizar el bitmap de bloques
+				err = sb.UpdateBitmapBlock(path)
+				if err != nil {
+					return err
+				}
+				//Se actualiza el superbloque
+				sb.S_blocks_count++
+				sb.S_free_blocks_count--
+				sb.S_first_blo += sb.S_block_size
+
+				// Serializar el superbloque
+				err = sb.Serialize(path, int64(mountedPartition.Part_start))
+				if err != nil {
+					return fmt.Errorf("error al serializar el superbloque: %w", err)
+				}
 				// fmt.Println("**********")
 				// nuevoFilebloque.Print()
 				break
@@ -257,6 +272,21 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 				if err2 != nil {
 					return err2
 				}
+				// Actualizar el bitmap de bloques
+				err = sb.UpdateBitmapBlock(path)
+				if err != nil {
+					return err
+				}
+				//Se actualiza el superbloque
+				sb.S_blocks_count++
+				sb.S_free_blocks_count--
+				sb.S_first_blo += sb.S_block_size
+
+				// Serializar el superbloque
+				err = sb.Serialize(path, int64(mountedPartition.Part_start))
+				if err != nil {
+					return fmt.Errorf("error al serializar el superbloque: %w", err)
+				}
 				// fmt.Println("**********")
 				// nuevoFilebloque.Print()
 			} else {
@@ -276,6 +306,7 @@ func MkgprComand(path string, login *LOGIN, comando *MKGRP, inodeIndex int32, sb
 			if err2 != nil {
 				return err2
 			}
+
 			// fmt.Println("**********")
 			// block.Print()
 			break

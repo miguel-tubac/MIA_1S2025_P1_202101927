@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type FileBlock struct {
@@ -75,4 +76,19 @@ func (fb *FileBlock) Deserialize(path string, offset int64) error {
 // PrintContent prints the content of B_content as a string
 func (fb *FileBlock) Print() {
 	fmt.Printf("%s", fb.B_content)
+}
+
+func (fb *FileBlock) ObtenerDot() string {
+	// Convierte el array de bytes en string y elimina caracteres nulos (\x00)
+	contenido := strings.TrimRight(string(fb.B_content[:]), "\x00")
+
+	// Reemplaza los saltos de línea con <br/> para Graphviz
+	contenido = strings.ReplaceAll(contenido, "\n", "<br/>")
+
+	// Genera la cadena con el contenido corregido
+	cadena := fmt.Sprintf(`
+		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
+		<tr><td colspan="2"> %s </td></tr>`, contenido)
+
+	return cadena
 }

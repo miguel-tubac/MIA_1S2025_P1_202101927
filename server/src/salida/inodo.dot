@@ -6,9 +6,9 @@ digraph G {
                 <tr><td>i_uid</td><td>1</td></tr>
                 <tr><td>i_gid</td><td>1</td></tr>
                 <tr><td>i_size</td><td>0</td></tr>
-                <tr><td>i_atime</td><td>2025-03-25T18:25:36-06:00</td></tr>
-                <tr><td>i_ctime</td><td>2025-03-25T18:25:36-06:00</td></tr>
-                <tr><td>i_mtime</td><td>2025-03-25T18:25:36-06:00</td></tr>
+                <tr><td>i_atime</td><td>2025-03-26T00:43:12-06:00</td></tr>
+                <tr><td>i_ctime</td><td>2025-03-26T00:43:12-06:00</td></tr>
+                <tr><td>i_mtime</td><td>2025-03-26T00:43:12-06:00</td></tr>
                 <tr><td>i_type</td><td>0</td></tr>
                 <tr><td>i_perm</td><td>777</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>
@@ -27,9 +27,9 @@ inode1 [label=<
                 <tr><td>i_uid</td><td>1</td></tr>
                 <tr><td>i_gid</td><td>1</td></tr>
                 <tr><td>i_size</td><td>27</td></tr>
-                <tr><td>i_atime</td><td>2025-03-25T18:25:36-06:00</td></tr>
-                <tr><td>i_ctime</td><td>2025-03-25T18:25:36-06:00</td></tr>
-                <tr><td>i_mtime</td><td>2025-03-25T18:25:36-06:00</td></tr>
+                <tr><td>i_atime</td><td>2025-03-26T00:43:12-06:00</td></tr>
+                <tr><td>i_ctime</td><td>2025-03-26T00:43:12-06:00</td></tr>
+                <tr><td>i_mtime</td><td>2025-03-26T00:43:12-06:00</td></tr>
                 <tr><td>i_type</td><td>1</td></tr>
                 <tr><td>i_perm</td><td>777</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>

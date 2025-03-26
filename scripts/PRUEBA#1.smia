@@ -57,7 +57,10 @@ chgrp -user=user12 -grp=usuarios4
 mkdir -p -path=/home/user/docs/usac
 
 #------Reporte: INODO Disco1.mia
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode
 
 #------Reporte: MBR y EBR Disco1.mia
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/mbryebr.jpg -name=mbr
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/mbryebr.jpg -name=mbr
+
+#------Reporte: bloques  (Carpetas y Archivos)
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/block.jpg -name=block

@@ -115,6 +115,6 @@ func ReportMBR(mbr *structures.MBR, path string, pathDisco string) error {
 		return fmt.Errorf("error al ejecutar el comando Graphviz: %v", err)
 	}
 
-	fmt.Println("Imagen de la tabla generada:", outputImage)
+	//fmt.Println("Imagen de la tabla generada:", outputImage)
 	return nil
 }

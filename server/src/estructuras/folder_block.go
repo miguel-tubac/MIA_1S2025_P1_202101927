@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type FolderBlock struct {
@@ -86,4 +87,18 @@ func (fb *FolderBlock) Print() {
 		fmt.Printf("  B_name: %s\n", name)
 		fmt.Printf("  B_inodo: %d\n", content.B_inodo)
 	}
+}
+
+// Funcion para obtener el codigo .dot de un folde block
+func (fb *FolderBlock) ObtenerDot() string {
+	//Se agrega las cabeceras de los blokes
+	cadena := "\n\t<tr><td>b_name</td><td>b_inodo</td></tr>"
+	//Se recorre el contenido
+	for _, content := range fb.B_content {
+		// Se obtiene el nombre y se eliminan caracteres nulos
+		name := strings.TrimRight(string(content.B_name[:]), "\x00")
+		// Se agrega a la cadena de retorno
+		cadena += fmt.Sprintf("\n\t<tr><td>%s</td><td>%d</td></tr>", name, content.B_inodo)
+	}
+	return cadena
 }

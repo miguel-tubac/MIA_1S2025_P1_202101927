@@ -92,7 +92,7 @@ func commandMkdir(mkdir *MKDIR) error {
 }
 
 func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.PARTITION) error {
-	fmt.Println("\nCreando directorio:", dirPath)
+	//fmt.Println("\nCreando directorio:", dirPath)
 
 	// GetParentDirectories obtiene las carpetas padres y el directorio de destino
 	parentDirs, destDir := utils.GetParentDirectories(dirPath)
@@ -106,8 +106,8 @@ func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath st
 	}
 
 	// Imprimir inodos y bloques
-	//sb.PrintInodes(partitionPath)
-	//sb.PrintBlocks(partitionPath)
+	// sb.PrintInodes(partitionPath)
+	// sb.PrintBlocks(partitionPath)
 
 	// Serializar el superbloque
 	err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
@@ -115,7 +115,10 @@ func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath st
 		return fmt.Errorf("error al serializar el superbloque: %w", err)
 	}
 
-	// Imprimir inodos y bloques
+	// fmt.Println("*****************")
+	// sb.Print()
+	// fmt.Println("*****************")
+	// // Imprimir inodos y bloques
 	// sb.PrintInodes(partitionPath)
 	// sb.PrintBlocks(partitionPath)
 	return nil

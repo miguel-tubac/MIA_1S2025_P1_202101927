@@ -2,6 +2,7 @@ package structures
 
 import (
 	utils "bakend/src/utils"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -166,7 +167,9 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 		return err
 	}
 	// Verificar si el inodo es de tipo carpeta
+	//fmt.Println(inodeIndex)
 	if inode.I_type[0] == '1' {
+		fmt.Println("aqui miguel")
 		return nil
 	}
 
@@ -193,7 +196,7 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 
 			// Sí las carpetas padre no están vacías debereamos buscar la carpeta padre más cercana
 			if len(parentsDir) != 0 {
-				//fmt.Println("---------ESTOY  VISITANDO--------")
+				fmt.Println("---------ESTOY  VISITANDO--------")
 
 				// Si el contenido está vacío, salir
 				if content.B_inodo == -1 {
@@ -210,9 +213,11 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 				contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
 				// Convertir parentDir a string y eliminar los caracteres nulos
 				parentDirName := strings.Trim(parentDir, "\x00 ")
+				// fmt.Println(contentName)
+				// fmt.Println(parentDirName)
 				// Si el nombre del contenido coincide con el nombre de la carpeta padre
 				if strings.EqualFold(contentName, parentDirName) {
-					//fmt.Println("---------LA ENCONTRÉ-------")
+					fmt.Println("---------LA ENCONTRÉ-------")
 					// Si son las mismas, entonces entramos al inodo que apunta el bloque
 					err := sb.createFolderInInode(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destDir)
 					if err != nil {
@@ -221,7 +226,7 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 					return nil
 				}
 			} else {
-				//fmt.Println("---------ESTOY  CREANDO--------")
+				fmt.Println("---------ESTOY  CREANDO--------")
 
 				// Si el apuntador al inodo está ocupado, continuar con el siguiente
 				if content.B_inodo != -1 {

@@ -102,6 +102,7 @@ func contains(list []string, value string) bool {
 // Ejemplo de función commandRep (debe ser implementada)
 func commandRep(rep *REP) error {
 	// Obtener la partición montada
+	//*structures.MBR, *structures.SuperBlock, path(particion) string, error
 	mountedMbr, mountedSb, mountedDiskPath, err := stores.GetMountedPartitionRep(rep.id)
 	if err != nil {
 		return err
@@ -125,14 +126,6 @@ func commandRep(rep *REP) error {
 		}
 		//Rerornamos el mensaje de satisfacion
 		return fmt.Errorf("imagen del INODE generada: %s", rep.path)
-	case "bm_inode":
-		err = reports.ReportBMInode(mountedSb, mountedDiskPath, rep.path)
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return err
-		}
-		//Rerornamos el mensaje de satisfacion
-		return fmt.Errorf("imagen del BM_INODE generada: %s", rep.path)
 	case "block":
 		err = reports.ReportBlock(mountedSb, mountedDiskPath, rep.path)
 		if err != nil {
@@ -141,6 +134,14 @@ func commandRep(rep *REP) error {
 		}
 		//Rerornamos el mensaje de satisfacion
 		return fmt.Errorf("imagen del BLOCK generada: %s", rep.path)
+	case "bm_inode":
+		err = reports.ReportBMInode(mountedSb, mountedDiskPath, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("imagen del BM_INODE generada: %s", rep.path)
 	}
 
 	return nil

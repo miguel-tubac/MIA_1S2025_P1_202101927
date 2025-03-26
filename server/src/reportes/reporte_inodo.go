@@ -42,7 +42,7 @@ func ReportInode(superblock *structures.SuperBlock, diskPath string, path string
 		// Definir el contenido DOT para el inodo actual
 		dotContent += fmt.Sprintf(`inode%d [label=<
             <table border="0" cellborder="1" cellspacing="0">
-                <tr><td colspan="2"> REPORTE INODO %d </td></tr>
+                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE INODO %d </font></td></tr>
                 <tr><td>i_uid</td><td>%d</td></tr>
                 <tr><td>i_gid</td><td>%d</td></tr>
                 <tr><td>i_size</td><td>%d</td></tr>
@@ -51,7 +51,7 @@ func ReportInode(superblock *structures.SuperBlock, diskPath string, path string
                 <tr><td>i_mtime</td><td>%s</td></tr>
                 <tr><td>i_type</td><td>%c</td></tr>
                 <tr><td>i_perm</td><td>%s</td></tr>
-                <tr><td colspan="2">BLOQUES DIRECTOS</td></tr>
+                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>
             `, i, i, inode.I_uid, inode.I_gid, inode.I_size, atime, ctime, mtime, rune(inode.I_type[0]), string(inode.I_perm[:]))
 
 		// Agregar los bloques directos a la tabla hasta el índice 11
@@ -64,11 +64,11 @@ func ReportInode(superblock *structures.SuperBlock, diskPath string, path string
 
 		// Agregar los bloques indirectos a la tabla
 		dotContent += fmt.Sprintf(`
-                <tr><td colspan="2">BLOQUE INDIRECTO</td></tr>
+                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO </font></td></tr>
                 <tr><td>%d</td><td>%d</td></tr>
-                <tr><td colspan="2">BLOQUE INDIRECTO DOBLE</td></tr>
+                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO DOBLE </font></td></tr>
                 <tr><td>%d</td><td>%d</td></tr>
-                <tr><td colspan="2">BLOQUE INDIRECTO TRIPLE</td></tr>
+                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO TRIPLE </font></td></tr>
                 <tr><td>%d</td><td>%d</td></tr>
             </table>>];
         `, 13, inode.I_block[12], 14, inode.I_block[13], 15, inode.I_block[14])
@@ -102,6 +102,6 @@ func ReportInode(superblock *structures.SuperBlock, diskPath string, path string
 		return err
 	}
 
-	fmt.Println("Imagen de los inodos generada:", outputImage)
+	//fmt.Println("Imagen de los inodos generada:", outputImage)
 	return nil
 }

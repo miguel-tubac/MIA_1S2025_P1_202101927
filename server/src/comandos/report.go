@@ -85,7 +85,8 @@ func ParseRep(tokens []string) (*REP, error) {
 		return nil, err
 	}
 
-	return cmd, nil // Devuelve el comando REP creado
+	// Devuelve el comando REP creado
+	return cmd, fmt.Errorf("reporte creado correctamnete: %+v", *cmd)
 }
 
 // Función auxiliar para verificar si un valor está en una lista
@@ -122,12 +123,24 @@ func commandRep(rep *REP) error {
 			fmt.Printf("Error: %v\n", err)
 			return err
 		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("imagen del INODE generada: %s", rep.path)
 	case "bm_inode":
 		err = reports.ReportBMInode(mountedSb, mountedDiskPath, rep.path)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return err
 		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("imagen del BM_INODE generada: %s", rep.path)
+	case "block":
+		err = reports.ReportBlock(mountedSb, mountedDiskPath, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("imagen del BLOCK generada: %s", rep.path)
 	}
 
 	return nil

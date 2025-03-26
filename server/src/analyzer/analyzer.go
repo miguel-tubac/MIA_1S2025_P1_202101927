@@ -194,6 +194,18 @@ func Analyzer(input string) ([]interface{}, []error) {
 				// Si el comando no es reconocido, agregamos el error
 				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"chgrp\": %s", tokens[0]))
 			}
+		case "mkdir": //Este comando crea las carpetas es decir las rutas
+			if comandos.ObtenerLogin() {
+				result, err := comandos.ParseMkdir(tokens[1:])
+				results = append(results, result)
+				//results = append(results, "\n")
+				if err != nil {
+					errors = append(errors, err)
+				}
+			} else {
+				// Si el comando no es reconocido, agregamos el error
+				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mkdir\": %s", tokens[0]))
+			}
 		default:
 			// Si el comando no es reconocido, agregamos el error
 			errors = append(errors, fmt.Errorf("comando desconocido: %s", tokens[0]))

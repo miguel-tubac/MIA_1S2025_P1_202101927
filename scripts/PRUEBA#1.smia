@@ -33,9 +33,6 @@ login -user=root -pass=123 -id=271A
 #------Mostrar las particiones montadas
 mounted
 
-#------Reporte: MBR y EBR Disco1.mia
-#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/reporte2.jpg -name=mbr
-
 #------Comando para agregar un grupo a user.txt (MKGRP)
 mkgrp -name=usuarios
 mkgrp -name=usuarios2
@@ -53,6 +50,14 @@ mkusr -user=user12 -pass=usuario -grp=usuarios
 #------Elimina el usuario user1
 rmusr -user=user1
 
-
 #------Cambia el grupo del user2
 chgrp -user=user12 -grp=usuarios4
+
+#------Crea la carpeta usac, si no existen las carpetas home user o docs se crean
+mkdir -p -path=/home/user/docs/usac
+
+#------Reporte: INODO Disco1.mia
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode
+
+#------Reporte: MBR y EBR Disco1.mia
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/mbryebr.jpg -name=mbr

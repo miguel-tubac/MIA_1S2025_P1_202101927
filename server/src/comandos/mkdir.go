@@ -21,25 +21,15 @@ type MKDIR struct {
    mkdir -path="/home/mis documentos/archivos clases"
 */
 
-func ParseMkdir(tokens []string) (string, error) {
+func ParseMkdir(tokens []string) (*MKDIR, error) {
 	cmd := &MKDIR{} // Crea una nueva instancia de MKDIR
 
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
 	args := strings.Join(tokens, " ")
 	// Expresión regular para encontrar los parámetros del comando mkdir
-	re := regexp.MustCompile(`-path=[^\s]+|-p`)
+	re := regexp.MustCompile(`-(?i:path=[^\s]+|path="[^"]+"|p)`)
 	// Encuentra todas las coincidencias de la expresión regular en la cadena de argumentos
 	matches := re.FindAllString(args, -1)
-
-	// Verificar que todos los tokens fueron reconocidos por la expresión regular
-	if len(matches) != len(tokens) {
-		// Identificar el parámetro inválido
-		for _, token := range tokens {
-			if !re.MatchString(token) {
-				return "", fmt.Errorf("parámetro inválido: %s", token)
-			}
-		}
-	}
 
 	// Itera sobre cada coincidencia encontrada
 	for _, match := range matches {
@@ -51,7 +41,7 @@ func ParseMkdir(tokens []string) (string, error) {
 		switch key {
 		case "-path":
 			if len(kv) != 2 {
-				return "", fmt.Errorf("formato de parámetro inválido: %s", match)
+				return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
 			}
 			value := kv[1]
 			// Remove quotes from value if present
@@ -63,31 +53,31 @@ func ParseMkdir(tokens []string) (string, error) {
 			cmd.p = true
 		default:
 			// Si el parámetro no es reconocido, devuelve un error
-			return "", fmt.Errorf("parámetro desconocido: %s", key)
+			return nil, fmt.Errorf("parámetro desconocido: %s", key)
 		}
 	}
 
 	// Verifica que el parámetro -path haya sido proporcionado
 	if cmd.path == "" {
-		return "", errors.New("faltan parámetros requeridos: -path")
+		return nil, errors.New("faltan parámetros requeridos: -path")
 	}
 
 	// Aquí se puede agregar la lógica para ejecutar el comando mkdir con los parámetros proporcionados
 	err := commandMkdir(cmd)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return fmt.Sprintf("MKDIR: Directorio %s creado correctamente.", cmd.path), nil // Devuelve el comando MKDIR creado
+	return cmd, fmt.Errorf("creado correctamente MKDIR: %+v", *cmd)
 }
 
 // Aquí debería de estar logeado un usuario, por lo cual el usuario debería tener consigo el id de la partición
-// En este caso el ID va a estar quemado
-var idPartition = "531A"
-
 func commandMkdir(mkdir *MKDIR) error {
+	//Obtenemos el usuario logeado
+	var usuario = ObtenerUsuari()
+
 	// Obtener la partición montada
-	partitionSuperblock, mountedPartition, partitionPath, err := stores.GetMountedPartitionSuperblock(idPartition)
+	partitionSuperblock, mountedPartition, partitionPath, err := stores.GetMountedPartitionSuperblock(usuario.id)
 	if err != nil {
 		return fmt.Errorf("error al obtener la partición montada: %w", err)
 	}
@@ -106,8 +96,8 @@ func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath st
 
 	// GetParentDirectories obtiene las carpetas padres y el directorio de destino
 	parentDirs, destDir := utils.GetParentDirectories(dirPath)
-	fmt.Println("\nDirectorios padres:", parentDirs)
-	fmt.Println("Directorio destino:", destDir)
+	//fmt.Println("\nDirectorios padres:", parentDirs)
+	//fmt.Println("Directorio destino:", destDir)
 
 	// Crear el directorio segun el path proporcionado
 	err := sb.CreateFolder(partitionPath, parentDirs, destDir)
@@ -116,8 +106,8 @@ func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath st
 	}
 
 	// Imprimir inodos y bloques
-	sb.PrintInodes(partitionPath)
-	sb.PrintBlocks(partitionPath)
+	//sb.PrintInodes(partitionPath)
+	//sb.PrintBlocks(partitionPath)
 
 	// Serializar el superbloque
 	err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
@@ -125,5 +115,8 @@ func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath st
 		return fmt.Errorf("error al serializar el superbloque: %w", err)
 	}
 
+	// Imprimir inodos y bloques
+	// sb.PrintInodes(partitionPath)
+	// sb.PrintBlocks(partitionPath)
 	return nil
 }

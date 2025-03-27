@@ -1,0 +1,24 @@
+digraph G {
+        node [shape=plaintext]
+    tabla [label=<
+        <table border="0" cellborder="1" cellspacing="0">
+			<tr><td colspan="2" bgcolor="#006400"><font color="white"> REPORTE SUPERBLOQUE</font></td></tr>
+			<tr><td>S_filesystem_type</td><td>2</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_inodes_count</font></td><td bgcolor="#32CD32"><font color="white">9</font></td></tr>
+			<tr><td>S_blocks_count</td><td>11</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_free_blocks_count</font></td><td bgcolor="#32CD32"><font color="white">19</font></td></tr>
+			<tr><td>S_free_inodes_count</td><td>1</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_mtime</font></td><td bgcolor="#32CD32"><font color="white">2025-03-26T18:55:28-06:00</font></td></tr>
+			<tr><td>S_umtime</td><td>2025-03-26T18:55:28-06:00</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_mnt_count</font></td><td bgcolor="#32CD32"><font color="white">1</font></td></tr>
+			<tr><td>S_magic</td><td>61267</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_inode_s</font></td><td bgcolor="#32CD32"><font color="white">88</font></td></tr>
+			<tr><td>S_block_s</td><td>64</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_firts_ino</font></td><td bgcolor="#32CD32"><font color="white">1053</font></td></tr>
+			<tr><td>S_first_blo</td><td>1845</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_bm_inode_start</font></td><td bgcolor="#32CD32"><font color="white">221</font></td></tr>
+			<tr><td>S_bm_block_start</td><td>231</td></tr>
+			<tr><td bgcolor="#32CD32"><font color="white">S_inode_start</font></td><td bgcolor="#32CD32"><font color="white">261</font></td></tr>
+			<tr><td>S_block_start</td><td>1141</td></tr>
+		</table>>];
+		}

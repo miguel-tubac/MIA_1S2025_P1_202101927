@@ -156,6 +156,14 @@ func commandRep(rep *REP) error {
 		}
 		//Rerornamos el mensaje de satisfacion
 		return fmt.Errorf("reporte (txt) del BM_Block generado: %s", rep.path)
+	case "sb":
+		err = reports.ReporteSB(mountedSb, mountedDiskPath, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("imagen del Superbloque generado: %s", rep.path)
 	}
 
 	return nil

@@ -72,7 +72,10 @@ mkdir -p -path=/home/user/docs22/usac22
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/block.jpg -name=block
 
 #------Reporte: bitmap de inodos
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/bm_inode.txt -name= bm_inode
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/bm_inode.txt -name= bm_inode
 
 #------Reporte: bitmap de bloques
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/bm_bloc.txt -name= bm_block
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/bm_bloc.txt -name= bm_block
+
+#------Reporte: superbloque
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/superbloque.jpg -name=sb

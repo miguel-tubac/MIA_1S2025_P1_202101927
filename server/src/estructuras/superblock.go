@@ -252,3 +252,22 @@ func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir str
 
 	return nil
 }
+
+// CreateFile crea una archivo en el sistema de archivos
+func (sb *SuperBlock) CreateFile(path string, parentsDir []string, nombreArchivo string, contenido string) error {
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		return sb.createFileInInode(path, 0, parentsDir, nombreArchivo, contenido)
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	for i := int32(0); i < sb.S_inodes_count; i++ {
+		err := sb.createFileInInode(path, i, parentsDir, nombreArchivo, contenido)
+		if err != nil {
+			return err
+		}
+		//fmt.Println(parentsDir)
+	}
+
+	return nil
+}

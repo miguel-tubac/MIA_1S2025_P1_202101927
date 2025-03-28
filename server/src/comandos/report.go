@@ -164,6 +164,22 @@ func commandRep(rep *REP) error {
 		}
 		//Rerornamos el mensaje de satisfacion
 		return fmt.Errorf("imagen del Superbloque generado: %s", rep.path)
+	case "disk":
+		err = reports.ReporteDisk(mountedMbr, mountedSb, mountedDiskPath, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("imagen del Disco generado: %s", rep.path)
+	case "file":
+		err = reports.ReporteFile(mountedSb, mountedDiskPath, rep.path, rep.path_file_ls)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("reporte (txt) del file generado: %s", rep.path)
 	}
 
 	return nil

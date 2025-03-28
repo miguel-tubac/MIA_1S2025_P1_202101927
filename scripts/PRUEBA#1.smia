@@ -56,10 +56,10 @@ rmusr -user=user1
 chgrp -user=user12 -grp=usuarios4
 
 #------Crea los archivos 
-#mkfile -size=15 -path=/home/user/docs/a.txt -r
+mkfile -size=15 -path=/home/a.txt -r
 #mkfile -size=15 -path=/home/user/docs/a.txt -r -cont=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/archivos_cont/prueba.txt
 #mkfile -size=15 -path=/home/user/docs/a.txt -r
-mkfile -path="/home/mis document/archivo 1.txt" -r
+#mkfile -path="/home/mis document/archivo 1.txt" -r
 
 #------Crea la carpeta usac, si no existen las carpetas home user o docs se crean
 #mkdir -p -path=/home/user/docs/usac
@@ -70,13 +70,13 @@ mkfile -path="/home/mis document/archivo 1.txt" -r
 #mkdir -p -path=/home/user/docs22/usac22
 
 #------Reporte: INODO Disco1.mia
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode
 
 #------Reporte: MBR y EBR Disco1.mia
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/mbryebr.jpg -name=mbr
 
 #------Reporte: bloques  (Carpetas y Archivos)
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/block.jpg -name=block
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/block.jpg -name=block
 
 #------Reporte: bitmap de inodos
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/bm_inode.txt -name=bm_inode
@@ -86,3 +86,10 @@ rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/
 
 #------Reporte: superbloque
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/superbloque.jpg -name=sb
+
+#------Reporte: del disco
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_disco.jpg -name=disk
+
+#------Reporte: del disco
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_file.txt -path_file_ls=/home/a.txt -name=file
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_file.txt -path_file_ls=/users.txt -name=file

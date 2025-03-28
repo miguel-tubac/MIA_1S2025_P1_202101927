@@ -7,9 +7,9 @@ digraph G {
                 <tr><td>i_uid</td><td>1</td></tr>
                 <tr><td>i_gid</td><td>1</td></tr>
                 <tr><td>i_size</td><td>0</td></tr>
-                <tr><td>i_atime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_ctime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_mtime</td><td>2025-03-27T00:34:40-06:00</td></tr>
+                <tr><td>i_atime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_ctime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_mtime</td><td>2025-03-27T22:58:40-06:00</td></tr>
                 <tr><td>i_type</td><td>0</td></tr>
                 <tr><td>i_perm</td><td>777</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>
@@ -28,9 +28,9 @@ inode1 [label=<
                 <tr><td>i_uid</td><td>1</td></tr>
                 <tr><td>i_gid</td><td>1</td></tr>
                 <tr><td>i_size</td><td>27</td></tr>
-                <tr><td>i_atime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_ctime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_mtime</td><td>2025-03-27T00:34:40-06:00</td></tr>
+                <tr><td>i_atime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_ctime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_mtime</td><td>2025-03-27T22:58:40-06:00</td></tr>
                 <tr><td>i_type</td><td>1</td></tr>
                 <tr><td>i_perm</td><td>777</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>
@@ -49,9 +49,9 @@ inode2 [label=<
                 <tr><td>i_uid</td><td>1</td></tr>
                 <tr><td>i_gid</td><td>1</td></tr>
                 <tr><td>i_size</td><td>0</td></tr>
-                <tr><td>i_atime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_ctime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_mtime</td><td>2025-03-27T00:34:40-06:00</td></tr>
+                <tr><td>i_atime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_ctime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_mtime</td><td>2025-03-27T22:58:40-06:00</td></tr>
                 <tr><td>i_type</td><td>0</td></tr>
                 <tr><td>i_perm</td><td>664</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>
@@ -69,35 +69,14 @@ inode3 [label=<
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE INODO 3 </font></td></tr>
                 <tr><td>i_uid</td><td>1</td></tr>
                 <tr><td>i_gid</td><td>1</td></tr>
-                <tr><td>i_size</td><td>0</td></tr>
-                <tr><td>i_atime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_ctime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_mtime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_type</td><td>0</td></tr>
-                <tr><td>i_perm</td><td>664</td></tr>
-                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>
-            <tr><td>1</td><td>5</td></tr><tr><td>2</td><td>-1</td></tr><tr><td>3</td><td>-1</td></tr><tr><td>4</td><td>-1</td></tr><tr><td>5</td><td>-1</td></tr><tr><td>6</td><td>-1</td></tr><tr><td>7</td><td>-1</td></tr><tr><td>8</td><td>-1</td></tr><tr><td>9</td><td>-1</td></tr><tr><td>10</td><td>-1</td></tr><tr><td>11</td><td>-1</td></tr><tr><td>12</td><td>-1</td></tr>
-                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO </font></td></tr>
-                <tr><td>13</td><td>-1</td></tr>
-                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO DOBLE </font></td></tr>
-                <tr><td>14</td><td>-1</td></tr>
-                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO TRIPLE </font></td></tr>
-                <tr><td>15</td><td>-1</td></tr>
-            </table>>];
-        inode3 -> inode4;
-inode4 [label=<
-            <table border="0" cellborder="1" cellspacing="0">
-                <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE INODO 4 </font></td></tr>
-                <tr><td>i_uid</td><td>1</td></tr>
-                <tr><td>i_gid</td><td>1</td></tr>
-                <tr><td>i_size</td><td>0</td></tr>
-                <tr><td>i_atime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_ctime</td><td>2025-03-27T00:34:40-06:00</td></tr>
-                <tr><td>i_mtime</td><td>2025-03-27T00:34:40-06:00</td></tr>
+                <tr><td>i_size</td><td>15</td></tr>
+                <tr><td>i_atime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_ctime</td><td>2025-03-27T22:58:40-06:00</td></tr>
+                <tr><td>i_mtime</td><td>2025-03-27T22:58:40-06:00</td></tr>
                 <tr><td>i_type</td><td>1</td></tr>
                 <tr><td>i_perm</td><td>664</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUES DIRECTOS </font></td></tr>
-            <tr><td>1</td><td>6</td></tr><tr><td>2</td><td>-1</td></tr><tr><td>3</td><td>-1</td></tr><tr><td>4</td><td>-1</td></tr><tr><td>5</td><td>-1</td></tr><tr><td>6</td><td>-1</td></tr><tr><td>7</td><td>-1</td></tr><tr><td>8</td><td>-1</td></tr><tr><td>9</td><td>-1</td></tr><tr><td>10</td><td>-1</td></tr><tr><td>11</td><td>-1</td></tr><tr><td>12</td><td>-1</td></tr>
+            <tr><td>1</td><td>5</td></tr><tr><td>2</td><td>-1</td></tr><tr><td>3</td><td>-1</td></tr><tr><td>4</td><td>-1</td></tr><tr><td>5</td><td>-1</td></tr><tr><td>6</td><td>-1</td></tr><tr><td>7</td><td>-1</td></tr><tr><td>8</td><td>-1</td></tr><tr><td>9</td><td>-1</td></tr><tr><td>10</td><td>-1</td></tr><tr><td>11</td><td>-1</td></tr><tr><td>12</td><td>-1</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO </font></td></tr>
                 <tr><td>13</td><td>-1</td></tr>
                 <tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE INDIRECTO DOBLE </font></td></tr>

@@ -1,0 +1,12 @@
+1,G,root
+1,U,root,root,123
+2,G,usuarios
+3,G,usuarios2
+4,G,usuarios3
+5,G,usuarios4
+0,G,usuarios5
+
+0,U,usuarios,user1,usuario
+3,U,usuarios4,user12,usuario
+
+

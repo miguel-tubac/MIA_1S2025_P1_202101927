@@ -271,3 +271,26 @@ func (sb *SuperBlock) CreateFile(path string, parentsDir []string, nombreArchivo
 
 	return nil
 }
+
+// CreateFolder crea una carpeta en el sistema de archivos
+func (sb *SuperBlock) GetFileContent(path string, parentsDir []string, destDir string) (string, error) {
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		return sb.getContenidoFile(path, 0, parentsDir, destDir)
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	for i := int32(0); i < sb.S_inodes_count; i++ {
+		cade, err := sb.getContenidoFile(path, i, parentsDir, destDir)
+		if err != nil {
+			return "", err
+		}
+		//Si la cadnea es distinta de cadena vasilla
+		if cade != "" {
+			return cade, nil
+		}
+	}
+	//sb.Print()
+
+	return "", nil
+}

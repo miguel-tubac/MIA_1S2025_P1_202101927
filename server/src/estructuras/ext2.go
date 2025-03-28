@@ -529,3 +529,119 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 	}
 	return nil
 }
+
+// createFolderInInode crea una carpeta en un inodo específico
+func (sb *SuperBlock) getContenidoFile(path string, inodeIndex int32, parentsDir []string, destDir string) (string, error) {
+	// Crear un nuevo inodo
+	inode := &Inode{}
+	// Deserializar el inodo
+	err := inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+	if err != nil {
+		return "", err
+	}
+	// Verificar si el inodo es de tipo carpeta
+	//fmt.Println(inodeIndex)
+	if inode.I_type[0] == '1' {
+		//fmt.Println("El tipo es 1 (Archivo)")
+		return "", nil
+	}
+
+	// Iterar sobre cada bloque del inodo (apuntadores)
+	for _, blockIndex := range inode.I_block {
+		// Si el bloque no existe, salir
+		if blockIndex == -1 {
+			break
+		}
+
+		// Crear un nuevo bloque de carpeta
+		block := &FolderBlock{}
+
+		// Deserializar el bloque
+		err := block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size))) // 64 porque es el tamaño de un bloque
+		if err != nil {
+			return "", err
+		}
+
+		// Iterar sobre cada contenido del bloque, desde el index 2 porque los primeros dos son . y ..
+		for indexContent := 2; indexContent < len(block.B_content); indexContent++ {
+			// Obtener el contenido del bloque
+			content := block.B_content[indexContent]
+
+			// Sí las carpetas padre no están vacías debereamos buscar la carpeta padre más cercana
+			if len(parentsDir) != 0 {
+				//fmt.Println("---------ESTOY  VISITANDO--------")
+
+				// Si el contenido está vacío, salir
+				if content.B_inodo == -1 {
+					break
+				}
+
+				// Obtenemos la carpeta padre más cercana
+				parentDir, err := utils.First(parentsDir)
+				if err != nil {
+					return "", err
+				}
+
+				// Convertir B_name a string y eliminar los caracteres nulos
+				contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
+				// Convertir parentDir a string y eliminar los caracteres nulos
+				parentDirName := strings.Trim(parentDir, "\x00 ")
+				// fmt.Println(contentName)
+				// fmt.Println(parentDirName)
+				// Si el nombre del contenido coincide con el nombre de la carpeta padre
+				if strings.EqualFold(contentName, parentDirName) {
+					//fmt.Println("---------LA ENCONTRÉ-------")
+					// Si son las mismas, entonces entramos al inodo que apunta el bloque
+					cade, err := sb.getContenidoFile(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destDir)
+					if err != nil {
+						return "", err
+					}
+					return cade, nil
+				}
+			} else {
+				//fmt.Println("---------ESTOY  OBTENIENDO--------")
+
+				//Comprovamos que sea el mismo archivo
+				contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
+				if contentName == destDir {
+					//Aca se obtiene el inodo:
+					inode2 := &Inode{}
+					// Deserializar el inodo
+					err := inode2.Deserialize(path, int64(sb.S_inode_start+(content.B_inodo*sb.S_inode_size)))
+					if err != nil {
+						return "", err
+					}
+					//Aca se muestra el inodo
+					//inode2.Print()
+
+					contenido := ""
+					// Iterar sobre cada bloque del inodo (apuntadores)
+					for _, blockIndex2 := range inode2.I_block {
+						// Si el bloque no existe, salir
+						if blockIndex2 == -1 {
+							break
+						}
+
+						filebloque := &FileBlock{}
+
+						// Deserializar el filebloque
+						err := filebloque.Deserialize(path, int64(sb.S_block_start+(blockIndex2*sb.S_block_size))) // 64 porque es el tamaño de un bloque
+						if err != nil {
+							return "", err
+						}
+
+						contenido += strings.Trim(string(filebloque.B_content[:]), "\x00 ")
+						//filebloque.Print()
+					}
+					//fmt.Println(contenido)
+
+					return contenido, nil
+				}
+
+				return "", nil
+			}
+		}
+
+	}
+	return "", nil
+}

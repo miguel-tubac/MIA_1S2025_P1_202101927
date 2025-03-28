@@ -27,24 +27,15 @@ bloque4 [label=<
 	<tr><td>b_name</td><td>b_inodo</td></tr>
 	<tr><td>.</td><td>2</td></tr>
 	<tr><td>..</td><td>0</td></tr>
-	<tr><td>mis document</td><td>3</td></tr>
+	<tr><td>a.txt</td><td>3</td></tr>
 	<tr><td>-</td><td>-1</td></tr>	</table>>];
 bloque5 [label=<
-							<table border="0" cellborder="1" cellspacing="0">
-							<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 5 </font></td></tr>
-	<tr><td>b_name</td><td>b_inodo</td></tr>
-	<tr><td>.</td><td>3</td></tr>
-	<tr><td>..</td><td>2</td></tr>
-	<tr><td>archivo 1.tx</td><td>4</td></tr>
-	<tr><td>-</td><td>-1</td></tr>	</table>>];
-bloque6 [label=<
 					<table border="0" cellborder="1" cellspacing="0">
 		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
-		<tr><td colspan="2">  </td></tr>	</table>>];
+		<tr><td colspan="2"> 012345678901234 </td></tr>	</table>>];
 bloque0 -> bloque1
 bloque1 -> bloque2
 bloque2 -> bloque3
 bloque3 -> bloque4
 bloque4 -> bloque5
-bloque5 -> bloque6
 }

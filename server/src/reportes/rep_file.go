@@ -23,10 +23,10 @@ func ReporteFile(superblock *structures.SuperBlock, diskPath string, path string
 	// fmt.Println("Directorios padres:", parentDirs)
 	// fmt.Println("Nombre archivo:", nombreArchivo)
 
-	//Aca ya se debe de generar el archivo en el disco virtual con el -path
+	//Aca ya se debe de obtner el archivo en el disco virtual con el -path
 	cade, err2 := superblock.GetFileContent(diskPath, parentDirs, nombreArchivo)
 	if err2 != nil {
-		return fmt.Errorf("error al crear el archivo: %w", err2)
+		return fmt.Errorf("error al obtener el archivo: %w", err2)
 	}
 
 	// Crear y escribir el archivo en la ruta especificada

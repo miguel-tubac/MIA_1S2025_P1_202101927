@@ -69,6 +69,11 @@ mkfile -size=15 -path=/home/a.txt -r
 #mkdir -path="/home/usac/mia"
 #mkdir -p -path=/home/user/docs22/usac22
 
+#------Comando Cat
+#cat -file1=/home/user/docs/a.txt
+#cat -file1="/home/a.txt" -file2="/home/b.txt" -file3="/home/c.txt"
+cat -file1=/users.txt -file1=/home/a.txt
+
 #------Reporte: INODO Disco1.mia
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode
 
@@ -90,6 +95,6 @@ mkfile -size=15 -path=/home/a.txt -r
 #------Reporte: del disco
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_disco.jpg -name=disk
 
-#------Reporte: del disco
+#------Reporte: del file
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_file.txt -path_file_ls=/home/a.txt -name=file
-rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_file.txt -path_file_ls=/users.txt -name=file
+#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_file.txt -path_file_ls=/users.txt -name=file

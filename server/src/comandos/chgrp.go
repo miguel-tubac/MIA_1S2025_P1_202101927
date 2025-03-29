@@ -142,7 +142,9 @@ func ChgrpComand(path string, login *LOGIN, comando *CHGRP, inodeIndex int32, sb
 
 		//Obtengo el texto del archivo uset.txt, de un fileblock
 		data = strings.Trim(string(block.B_content[:]), "\x00 ")
-
+		// fmt.Println("*******************")
+		// fmt.Println(data)
+		// fmt.Println("*******************")
 		/*
 			1,G,root
 			1,U,root,root,123
@@ -175,12 +177,13 @@ func ChgrpComand(path string, login *LOGIN, comando *CHGRP, inodeIndex int32, sb
 					}
 					encontrado = true
 					//Se edita el id del grupo
-					result += id + "," + tipo + "," + comando.grp + "," + usuario + "," + password + "\n"
+					result += id + "," + tipo + "," + comando.grp + "," + usuario + "," + password //+ "\n"
 					//Continua por si hay mas datos y se agregan al contenido del fileblock
 					continue
 				}
 				//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s\n", id, tipo, nombre)
 			} else if len(values) == 3 {
+				//Aca es para validar si el grupo existe ya que se cambio de grupo
 				id2, _, nombre2 := values[0], values[1], values[2]
 				if nombre2 == comando.grp {
 					//Esto quiere decir que el grupo esta elimando por lo tanto guradomos el correcto
@@ -194,7 +197,11 @@ func ChgrpComand(path string, login *LOGIN, comando *CHGRP, inodeIndex int32, sb
 		}
 
 		if encontrado && encontradoGrupo {
-			// Copiamos el texto de usuarios en el bloque
+			//Aca eliminamos caracteres nulos si es que existen
+			//fmt.Println(result)
+			result = strings.Trim(string(result), "\x00 ")
+			// Limpiar el array antes de copiar
+			block.B_content = [64]byte{}
 			copy(block.B_content[:], []byte(result))
 			//Se serealiza todo el contenido en el Fileblock
 			err2 := block.Serialize(path, int64(sb.S_block_start+(int32(indiceFinal)*sb.S_block_size)))

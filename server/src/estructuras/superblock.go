@@ -224,7 +224,7 @@ func (sb *SuperBlock) PrintBlocks(path string) error {
 }
 
 // CreateFolder crea una carpeta en el sistema de archivos
-func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir string) error {
+func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir string, validacion *bool) error {
 	//fmt.Println(parentsDir)
 	//Aca se valida si el parametro p
 	//Aca indica que se debe de crear todas las carpetas
@@ -238,12 +238,13 @@ func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir str
 	*/
 	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
 	if len(parentsDir) == 0 {
-		return sb.createFolderInInode(path, 0, parentsDir, destDir)
+		return sb.createFolderInInode(path, 0, parentsDir, destDir, validacion)
 	}
 
 	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+
 	for i := int32(0); i < sb.S_inodes_count; i++ {
-		err := sb.createFolderInInode(path, i, parentsDir, destDir)
+		err := sb.createFolderInInode(path, i, parentsDir, destDir, validacion)
 		if err != nil {
 			return err
 		}
@@ -293,4 +294,24 @@ func (sb *SuperBlock) GetFileContent(path string, parentsDir []string, destDir s
 	//sb.Print()
 
 	return "", nil
+}
+
+// Aca unicamente sirve para comprovar si realmente existe la ruta
+func (sb *SuperBlock) ComprovarFolder(path string, parentsDir []string, destDir string, validacion *bool) error {
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		return sb.comprovarFolderInInodeExiste(path, 0, parentsDir, destDir, validacion)
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+
+	for i := int32(0); i < sb.S_inodes_count; i++ {
+		err := sb.comprovarFolderInInodeExiste(path, i, parentsDir, destDir, validacion)
+		if err != nil {
+			return err
+		}
+	}
+	//sb.Print()
+
+	return nil
 }

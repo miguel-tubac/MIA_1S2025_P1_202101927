@@ -43,6 +43,15 @@ func ParseMkdisk(tokens []string) (*MKDISK, error) {
 	// Encuentra todas las coincidencias de la expresión regular en la cadena de argumentos
 	matches := re.FindAllString(args, -1)
 
+	// **VALIDAR SI HAY TOKENS INVÁLIDOS**
+	// Eliminamos los parámetros válidos de la entrada
+	cleanedArgs := re.ReplaceAllString(args, "")
+	cleanedArgs = strings.TrimSpace(cleanedArgs) // Limpiar espacios en blanco
+
+	if cleanedArgs != "" {
+		return nil, fmt.Errorf("parámetro inválido encontrado: %s", cleanedArgs)
+	}
+
 	// Itera sobre cada coincidencia encontrada
 	for _, match := range matches {
 		// Divide cada parte en clave y valor usando "=" como delimitador
@@ -58,6 +67,7 @@ func ParseMkdisk(tokens []string) (*MKDISK, error) {
 		}
 
 		// Switch para manejar diferentes parámetros
+		//fmt.Println(key)
 		switch key {
 		case "-size":
 			// Convierte el valor del tamaño a un entero

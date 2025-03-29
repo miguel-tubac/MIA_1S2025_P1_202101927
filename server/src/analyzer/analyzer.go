@@ -85,18 +85,18 @@ func Analyzer(input string) ([]interface{}, []error) {
 			// 	errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mount\": %s", tokens[0]))
 			// }
 		case "mounted":
-			if comandos.ObtenerLogin() {
-				// Llama a la función para el mounted
-				result, err := comandos.MountedParser()
-				results = append(results, result)
-				//results = append(results, "\n")
-				if err != nil {
-					errors = append(errors, err)
-				}
-			} else {
-				// Si el comando no es reconocido, agregamos el error
-				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mounted\": %s", tokens[0]))
+			//if comandos.ObtenerLogin() {
+			// Llama a la función para el mounted
+			result, err := comandos.MountedParser()
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
 			}
+			// } else {
+			// 	// Si el comando no es reconocido, agregamos el error
+			// 	errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"mounted\": %s", tokens[0]))
+			// }
 		case "mkfs":
 			result, err := comandos.ParseMkfs(tokens[1:])
 			results = append(results, result)
@@ -117,17 +117,17 @@ func Analyzer(input string) ([]interface{}, []error) {
 				errors = append(errors, fmt.Errorf("debe deslogearse para utilizar el comando \"login\": %s", tokens[0]))
 			}
 		case "rep":
-			if comandos.ObtenerLogin() {
-				result, err := comandos.ParseRep(tokens[1:])
-				results = append(results, result)
-				//results = append(results, "\n")
-				if err != nil {
-					errors = append(errors, err)
-				}
-			} else {
-				// Si el comando no es reconocido, agregamos el error
-				errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"rep\": %s", tokens[0]))
+			//if comandos.ObtenerLogin() {
+			result, err := comandos.ParseRep(tokens[1:])
+			results = append(results, result)
+			//results = append(results, "\n")
+			if err != nil {
+				errors = append(errors, err)
 			}
+			// } else {
+			// 	// Si el comando no es reconocido, agregamos el error
+			// 	errors = append(errors, fmt.Errorf("debe logearse para utilizar el comando \"rep\": %s", tokens[0]))
+			// }
 		case "logout":
 			result, err := comandos.Logout(tokens[1:])
 			results = append(results, result)

@@ -163,7 +163,7 @@ func RmuserComand(path string, login *LOGIN, comando *RMUSR, inodeIndex int32, s
 					}
 					encontrado = true
 					//Se edita el id del grupo
-					result += "0," + tipo + "," + grupo + "," + usuario + "," + password + "\n"
+					result += "0," + tipo + "," + grupo + "," + usuario + "," + password //+ "\n"
 					//Continua por si hay mas datos y se agregan al contenido del fileblock
 					continue
 				}
@@ -175,6 +175,8 @@ func RmuserComand(path string, login *LOGIN, comando *RMUSR, inodeIndex int32, s
 		if encontrado {
 
 			// Copiamos el texto de usuarios en el bloque
+			// Limpiar el array antes de copiar
+			block.B_content = [64]byte{}
 			copy(block.B_content[:], []byte(result))
 			//Se serealiza todo el contenido en el Fileblock
 			err2 := block.Serialize(path, int64(sb.S_block_start+(int32(indiceFinal)*sb.S_block_size)))

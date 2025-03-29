@@ -131,6 +131,8 @@ func createFile(mkfile *MKFILE, sb *structures.SuperBlock, partitionPath string,
 		//Aca se iran agregando las carpetas
 		destDir := ""
 		var nuevo []string
+		//Esta validacion no se avalua
+		validacion := true
 		// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
 		for i := 0; i < len(parentDirs); i++ {
 			destDir = parentDirs[i]
@@ -139,7 +141,7 @@ func createFile(mkfile *MKFILE, sb *structures.SuperBlock, partitionPath string,
 			tempNuevo := append([]string{}, nuevo...)
 
 			// Crear el directorio segun el path proporcionado
-			err := sb.CreateFolder(partitionPath, tempNuevo, destDir)
+			err := sb.CreateFolder(partitionPath, tempNuevo, destDir, &validacion)
 			if err != nil {
 				return fmt.Errorf("error al crear el directorio: %w", err)
 			}
@@ -154,6 +156,30 @@ func createFile(mkfile *MKFILE, sb *structures.SuperBlock, partitionPath string,
 			// fmt.Println(nuevo)
 			// fmt.Println(destDir)
 			nuevo = append(nuevo, destDir)
+		}
+
+		//Aca se valida si no esta la ruta creada
+	} else {
+		// aca unicamente se valida si la ruta esta creada
+		valida := true
+		//Crea una copia para no editar el areglo riginal
+		copia := make([]string, len(parentDirs)) // Crear un slice con el mismo tamaño
+		copy(copia, parentDirs)                  // Copiar los elementos
+		//fmt.Println("---------------------")
+		// fmt.Println(copia)
+		// fmt.Println(nombreArchivo)
+		//fmt.Println(sb.S_inodes_count)
+		//Anaaliza el destino
+		errr := sb.ComprovarFolder(partitionPath, copia, nombreArchivo, &valida)
+		if errr != nil {
+			//aca se genero un error
+			return fmt.Errorf("error al comprovar si existe la ruta: %w", errr)
+		}
+
+		//La funcion cambia a false y por lo tanto no deberia entrar
+		//Si no cambia a false es porque no lo encontro
+		if valida {
+			return errors.New("no existe la carpeta padres")
 		}
 	}
 

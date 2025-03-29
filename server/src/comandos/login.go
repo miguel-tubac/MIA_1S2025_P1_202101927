@@ -150,7 +150,7 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 			return err
 		}
 
-		//Obtengo el texto del archivo uset.txt
+		//Concateno el texto del archivo uset.txt
 		data += strings.Trim(string(block.B_content[:]), "\x00 ")
 
 	}
@@ -174,21 +174,22 @@ func Login(path string, login *LOGIN, inodeIndex int32, sb *structures.SuperBloc
 		} else if len(values) == 5 {
 			//Estos son los usuarios
 			numeral, _, _, nombre, extra := values[0], values[1], values[2], values[3], values[4]
-			//Esto valida que el usuario no este eliminado
-			if numeral == "0" {
-				logeado = false
-				return fmt.Errorf("error con el suario: %s este ya se encuntra eliminado", nombre)
-			}
 			if nombre == login.user && extra == login.pass {
+				//Esto valida que el usuario no este eliminado
+				if numeral == "0" {
+					logeado = false
+					return fmt.Errorf("error con el suario: %s este ya se encuntra eliminado", nombre)
+				}
 				logeado = true
 				//fmt.Println("Logeado")
-			} else {
-				logeado = false
-				return fmt.Errorf("error con el suario: %s ó contraseña: %s", nombre, extra)
 			}
 
 			//fmt.Printf("ID: %s, Tipo: %s, Nombre: %s, Extra: %s\n", id, tipo, nombre, extra)
 		}
+	}
+
+	if !logeado {
+		return fmt.Errorf("error el suario: %s ó contraseña no existe: %s", login.user, login.pass)
 	}
 
 	return nil
@@ -202,10 +203,10 @@ func Logout(tokens []string) (*LOGIN, error) {
 		cmd.id = ""
 		cmd.pass = ""
 		cmd.user = ""
-		return nil, errors.New("usuario loslogeado")
+		return nil, errors.New("usuario deslogeado")
 	}
 
-	return nil, errors.New("no puede deslogearse si no existe un usuario loslogeado")
+	return nil, errors.New("no puede deslogearse si no existe un usuario logeado")
 }
 
 func ObtenerLogin() bool {

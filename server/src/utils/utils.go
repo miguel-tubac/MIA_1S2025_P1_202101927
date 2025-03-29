@@ -38,6 +38,10 @@ var nextLetterIndex = 0
 
 // GetLetter obtiene la letra asignada a un path y el siguiente índice de partición
 func GetLetterAndPartitionCorrelative(path string) (string, int, error) {
+	// Verificar si el path ya ha sido declarado
+	// if _, exists := pathToPartitionCount[path]; exists {
+	// 	return "", 0, fmt.Errorf("error: el path '%s' ya ha sido declarado", path)
+	// }
 	// Asignar una letra al path si no tiene una asignada
 	if _, exists := pathToLetter[path]; !exists {
 		if nextLetterIndex < len(alphabet) {

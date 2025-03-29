@@ -9,10 +9,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-
-	stores "bakend/src/almacenamiento"
-	comandos "bakend/src/comandos"
-	utils "bakend/src/utils"
 )
 
 type RequestData struct {
@@ -36,11 +32,14 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error al procesar la solicitud", http.StatusBadRequest)
 		return
 	}
-	//Se reinicia la lista de los id´s montados
-	stores.ClearMountedPartitions()
-	utils.ResetMapsAndIndex()
-	//Se reinicia el login
-	comandos.SetearLogin()
+
+	//********************* Esta parte es para no parar el bakend y volver a reiniciarlo***************
+	// //Se reinicia la lista de los id´s montados
+	// stores.ClearMountedPartitions()
+	// utils.ResetMapsAndIndex()
+	// //Se reinicia el login
+	// comandos.SetearLogin()
+	//************************** fin ******************************************************************
 
 	//fmt.Println(requestData.Entrada)
 	cmd, errs := analyzer.Analyzer(requestData.Entrada)

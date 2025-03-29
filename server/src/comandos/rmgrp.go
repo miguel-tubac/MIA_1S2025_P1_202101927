@@ -160,7 +160,7 @@ func RmgrpComand(path string, login *LOGIN, comando *RMGRP, inodeIndex int32, sb
 					}
 					encontrado = true
 					//Se edita el id del grupo
-					result += "0," + tipo + "," + nombre + "\n"
+					result += "0," + tipo + "," + nombre //+ "\n"
 					//Continua por si hay mas datos y se agregan al contenido del fileblock
 					continue
 				}

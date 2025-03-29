@@ -44,7 +44,7 @@ func ReporteDisk(mbrparticion *structures.MBR, superblock *structures.SuperBlock
 	content += "\tnode [shape=none];\n"
 	content += "\tgraph [splines=false];\n"
 	content += "\tsubgraph cluster_disk {\n"
-	content += "\t\tlabel=\"Disco1.dsk\";\n"
+	content += "\t\tlabel=\"DISCO\";\n"
 	content += "\t\tstyle=rounded;\n"
 	content += "\t\tcolor=black;\n"
 

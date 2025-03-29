@@ -203,11 +203,13 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 	Part_name        [16]byte // Nombre de la partición
 	Part_correlative int32    // Correlativo de la partición
 	Part_id          [4]byte  // ID de la partición */
+	if int32(sizeBytes) >= mbr.Mbr_size {
+		return errors.New("la particion es mas grande que el disco")
+	}
+
 	availablePartition, startPartition, indexPartition := mbr.GetFirstAvailablePartition() //*PARTITION, int, int   (Retornos)
-	var err2 error
-	err2 = nil
 	if availablePartition == nil {
-		err2 = errors.New("no hay particiones disponibles o la particion es mas grande que el disco")
+		return errors.New("no hay particiones disponibles o la particion es mas grande que el disco")
 	}
 
 	//Se comprueba si existe otra particion con el mismo nombre
@@ -228,11 +230,11 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 	// Serializar el MBR en el archivo binario
 	err = mbr.SerializeMBR(fdisk.path)
 	if err != nil {
-		fmt.Println("Error:", err)
-		err2 = err //En caso de que ocura un error se retorna
+		//fmt.Println("Error:", err)
+		return err //En caso de que ocura un error se retorna
 	}
 
-	return err2 //Si no ocurrio ningun error se retorna nil
+	return nil //Si no ocurrio ningun error se retorna nil
 }
 
 // -------------------------------------------------------------Particion Extendida--------------------------------------------------------------
@@ -252,12 +254,15 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 	// Imprimir MBR
 	//fmt.Println("\n--MBR original--")
 	//mbr.PrintMBR()
+	if int32(sizeBytes) >= mbr.Mbr_size {
+		return errors.New("la particion es mas grande que el disco")
+	}
 
 	availablePartition, startPartition, indexPartition := mbr.GetFirstAvailablePartition() //*PARTITION, int, int   (Retornos)
 	var err2 error
 	err2 = nil
 	if availablePartition == nil {
-		err2 = errors.New("no hay particiones disponibles o la particion es mas grande que el disco")
+		return errors.New("no hay particiones disponibles o la particion es mas grande que el disco")
 	}
 
 	//Validar si existe otra paricion extendida(Solo puede aver una)
@@ -351,6 +356,9 @@ func createLogicPartition(fdisk *FDISK, sizeBytes int) error {
 	// Imprimir MBR
 	//fmt.Println("\n--MBR original--")
 	//mbr.PrintMBR()
+	if int32(sizeBytes) >= mbr.Mbr_size {
+		return errors.New("la particion es mas grande que el disco")
+	}
 
 	//Validar si existe la particion extendida
 	var err2 error

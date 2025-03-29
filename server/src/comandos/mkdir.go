@@ -98,7 +98,8 @@ func createDirectory(mkdir *MKDIR, sb *structures.SuperBlock, partitionPath stri
 	parentDirs, destDir := utils.GetParentDirectories(mkdir.path)
 	// fmt.Println("\nDirectorios padres:", parentDirs)
 	// fmt.Println("Directorio destino:", destDir)
-
+	validacion := true
+	// fmt.Println(mkdir.p)
 	if mkdir.p {
 		//Directorios padres: parentsDir == [home user docs]
 		//Directorio destino: destDir = usac
@@ -114,7 +115,7 @@ func createDirectory(mkdir *MKDIR, sb *structures.SuperBlock, partitionPath stri
 			tempNuevo := append([]string{}, nuevo...)
 
 			// Crear el directorio segun el path proporcionado
-			err := sb.CreateFolder(partitionPath, tempNuevo, destDir)
+			err := sb.CreateFolder(partitionPath, tempNuevo, destDir, &validacion)
 			if err != nil {
 				return fmt.Errorf("error al crear el directorio: %w", err)
 			}
@@ -133,9 +134,13 @@ func createDirectory(mkdir *MKDIR, sb *structures.SuperBlock, partitionPath stri
 		//Aca es cuando el parametro -p no se especifica
 	} else {
 		// Crear el directorio segun el path proporcionado
-		err := sb.CreateFolder(partitionPath, parentDirs, destDir)
+		err := sb.CreateFolder(partitionPath, parentDirs, destDir, &validacion)
 		if err != nil {
 			return fmt.Errorf("error al crear el directorio: %w", err)
+		}
+
+		if validacion {
+			return errors.New("no existe la carpeta padres")
 		}
 
 		// Imprimir inodos y bloques

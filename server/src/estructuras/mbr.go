@@ -112,6 +112,9 @@ func (mbr *MBR) GetPartitionByName(name string) (*PARTITION, int) {
 		inputName := strings.Trim(name, "\x00 ")
 		// Si el nombre de la partición coincide, devolver la partición y el índice
 		if strings.EqualFold(partitionName, inputName) {
+			if partition.Part_status[0] == '1' {
+				return nil, -1
+			}
 			return &partition, i
 		}
 	}

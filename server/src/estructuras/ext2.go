@@ -2,6 +2,7 @@ package structures
 
 import (
 	utils "bakend/src/utils"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -157,7 +158,7 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 }
 
 // createFolderInInode crea una carpeta en un inodo específico
-func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parentsDir []string, destDir string) error {
+func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parentsDir []string, destDir string, validacion *bool) error {
 	// Crear un nuevo inodo
 	inode := &Inode{}
 	// Deserializar el inodo
@@ -195,7 +196,7 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 
 			// Sí las carpetas padre no están vacías debereamos buscar la carpeta padre más cercana
 			if len(parentsDir) != 0 {
-				// fmt.Println("---------ESTOY  VISITANDO--------")
+				//fmt.Println("---------ESTOY  VISITANDO--------")
 
 				// Si el contenido está vacío, salir
 				if content.B_inodo == -1 {
@@ -212,20 +213,22 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 				contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
 				// Convertir parentDir a string y eliminar los caracteres nulos
 				parentDirName := strings.Trim(parentDir, "\x00 ")
-				// fmt.Println(contentName)
-				// fmt.Println(parentDirName)
+				fmt.Println(contentName)
+				fmt.Println(parentDirName)
 				// Si el nombre del contenido coincide con el nombre de la carpeta padre
 				if strings.EqualFold(contentName, parentDirName) {
-					// fmt.Println("---------LA ENCONTRÉ-------")
+					//fmt.Println("---------LA ENCONTRÉ-------")
 					// Si son las mismas, entonces entramos al inodo que apunta el bloque
-					err := sb.createFolderInInode(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destDir)
+					err := sb.createFolderInInode(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destDir, validacion)
 					if err != nil {
 						return err
 					}
 					return nil
+				}else if inodeIndex ==  {
+
 				}
 			} else {
-				// fmt.Println("---------ESTOY  CREANDO--------")
+				//fmt.Println("---------ESTOY  CREANDO--------")
 
 				// Si el apuntador al inodo está ocupado, continuar con el siguiente
 				if content.B_inodo != -1 {
@@ -302,6 +305,9 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 				sb.S_free_blocks_count--
 				sb.S_first_blo += sb.S_block_size
 
+				*validacion = false
+				// fmt.Println("******************************")
+				// fmt.Println(*validacion)
 				return nil
 			}
 		}
@@ -446,52 +452,56 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 						}
 
 						//TODO: validar cuando el contenido deba de aplicar los bloques indirectos
-						if contador == 12 {
+						// Bloque Simple Indirecto: Inodo → Bloque apuntadores → bloque de datos
+						// if contador == 12 {
 
-						} else if contador == 13 {
+						// 	// Bloque Doble Indirecto: Inodo → Bloque de apuntadores → Bloquede apuntadores → bloque de datos.
+						// } else if contador == 13 {
 
-						} else if contador == 14 {
+						// 	// Bloque Triple Indirecto: Inodo → Bloque de apuntadores → Bloque
+						// 	// de apuntadores → Bloque de apuntadores → bloque de datos.
+						// } else if contador == 14 {
 
-						} else {
-							//Se actuliza los apuntadores del inodo
-							blockIndex++
-							usersInode.I_block[contador] = blockIndex
-							//Serealizar el ibloque actualizado
-							// Deserializar el inodo
-							//err := usersInode.Serialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
-							err := usersInode.Serialize(path, posicionInodo)
-							if err != nil {
-								return err
-							}
-
-							parte := contenido[i:fin]
-							// Creamos el bloque de users.txt
-							usersBlock := &FileBlock{
-								B_content: [64]byte{},
-							}
-							// Copiamos el texto de usuarios en el bloque
-							copy(usersBlock.B_content[:], []byte(parte))
-
-							// Serializar el bloque de users.txt
-							err = usersBlock.Serialize(path, int64(sb.S_first_blo))
-							if err != nil {
-								return err
-							}
-
-							// Actualizar el bitmap de bloques
-							err = sb.UpdateBitmapBlock(path)
-							if err != nil {
-								return err
-							}
-
-							// Actualizamos el superbloque
-							sb.S_blocks_count++
-							sb.S_free_blocks_count--
-							sb.S_first_blo += sb.S_block_size
-							//fmt.Println(parte)
-							//Se incrementa en una unidad el contador
-							contador++
+						// } else {
+						//Se actuliza los apuntadores del inodo
+						blockIndex++
+						usersInode.I_block[contador] = blockIndex
+						//Serealizar el ibloque actualizado
+						// Deserializar el inodo
+						//err := usersInode.Serialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+						err := usersInode.Serialize(path, posicionInodo)
+						if err != nil {
+							return err
 						}
+
+						parte := contenido[i:fin]
+						// Creamos el bloque de users.txt
+						usersBlock := &FileBlock{
+							B_content: [64]byte{},
+						}
+						// Copiamos el texto de usuarios en el bloque
+						copy(usersBlock.B_content[:], []byte(parte))
+
+						// Serializar el bloque de users.txt
+						err = usersBlock.Serialize(path, int64(sb.S_first_blo))
+						if err != nil {
+							return err
+						}
+
+						// Actualizar el bitmap de bloques
+						err = sb.UpdateBitmapBlock(path)
+						if err != nil {
+							return err
+						}
+
+						// Actualizamos el superbloque
+						sb.S_blocks_count++
+						sb.S_free_blocks_count--
+						sb.S_first_blo += sb.S_block_size
+						//fmt.Println(parte)
+						//}
+						//Se incrementa en una unidad el contador
+						contador++
 					}
 					//Aca es unicamente un solo FileBlock
 				} else {
@@ -631,7 +641,8 @@ func (sb *SuperBlock) getContenidoFile(path string, inodeIndex int32, parentsDir
 						}
 
 						contenido += strings.Trim(string(filebloque.B_content[:]), "\x00 ")
-						//filebloque.Print()
+						// fmt.Println("****************contenido******************")
+						// filebloque.Print()
 					}
 					//fmt.Println(contenido)
 
@@ -644,4 +655,91 @@ func (sb *SuperBlock) getContenidoFile(path string, inodeIndex int32, parentsDir
 
 	}
 	return "", nil
+}
+
+// createFolderInInode crea una carpeta en un inodo específico
+func (sb *SuperBlock) comprovarFolderInInodeExiste(path string, inodeIndex int32, parentsDir []string, destDir string, validacion *bool) error {
+	// Crear un nuevo inodo
+	inode := &Inode{}
+	// Deserializar el inodo
+	err := inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+	if err != nil {
+		return err
+	}
+	// Verificar si el inodo es de tipo carpeta
+	//fmt.Println(inodeIndex)
+	if inode.I_type[0] == '1' {
+		// fmt.Println("aqui miguel")
+		return nil
+	}
+
+	// Iterar sobre cada bloque del inodo (apuntadores)
+	for _, blockIndex := range inode.I_block {
+		// Si el bloque no existe, salir
+		if blockIndex == -1 {
+			break
+		}
+
+		// Crear un nuevo bloque de carpeta
+		block := &FolderBlock{}
+
+		// Deserializar el bloque
+		err := block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size))) // 64 porque es el tamaño de un bloque
+		if err != nil {
+			return err
+		}
+
+		// Iterar sobre cada contenido del bloque, desde el index 2 porque los primeros dos son . y ..
+		for indexContent := 2; indexContent < len(block.B_content); indexContent++ {
+			// Obtener el contenido del bloque
+			content := block.B_content[indexContent]
+
+			// Sí las carpetas padre no están vacías debereamos buscar la carpeta padre más cercana
+			if len(parentsDir) != 0 {
+				// fmt.Println("---------ESTOY  VISITANDO--------")
+
+				// Si el contenido está vacío, salir
+				if content.B_inodo == -1 {
+					break
+				}
+
+				// Obtenemos la carpeta padre más cercana
+				parentDir, err := utils.First(parentsDir)
+				if err != nil {
+					return err
+				}
+
+				// Convertir B_name a string y eliminar los caracteres nulos
+				contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
+				// Convertir parentDir a string y eliminar los caracteres nulos
+				parentDirName := strings.Trim(parentDir, "\x00 ")
+				// fmt.Println(contentName)
+				// fmt.Println(parentDirName)
+				// Si el nombre del contenido coincide con el nombre de la carpeta padre
+				if strings.EqualFold(contentName, parentDirName) {
+					// fmt.Println("---------LA ENCONTRÉ-------")
+					// Si son las mismas, entonces entramos al inodo que apunta el bloque
+					err := sb.comprovarFolderInInodeExiste(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destDir, validacion)
+					if err != nil {
+						return err
+					}
+					return nil
+				}
+			} else {
+				// fmt.Println("---------ESTOY  CREANDO--------")
+
+				// Si el apuntador al inodo está ocupado, continuar con el siguiente
+				if content.B_inodo != -1 {
+					continue
+				}
+
+				*validacion = false
+				// fmt.Println("**************comprovocaion****************")
+				// fmt.Println(*validacion)
+				return nil
+			}
+		}
+
+	}
+	return nil
 }

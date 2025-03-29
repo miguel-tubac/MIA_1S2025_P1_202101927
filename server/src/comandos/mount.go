@@ -101,8 +101,8 @@ func commandMount(mount *MOUNT) error {
 	// Buscar la partición con el nombre especificado
 	partition, indexPartition := mbr.GetPartitionByName(mount.name)
 	if partition == nil {
-		fmt.Println("Error: la partición no existe")
-		return errors.New("error en el mount: la partición no existe")
+		//fmt.Println("Error: la partición no existe")
+		return errors.New("error en el mount: la partición no existe o ya esta montada")
 	}
 
 	/* SOLO PARA VERIFICACIÓN */
@@ -113,7 +113,7 @@ func commandMount(mount *MOUNT) error {
 	// Generar un id único para la partición
 	idPartition, partitionCorrelative, err := generatePartitionID(mount)
 	if err != nil {
-		fmt.Println("Error generando el id de partición:", err)
+		//fmt.Println("Error generando el id de partición:", err)
 		return err
 	}
 
@@ -145,7 +145,7 @@ func generatePartitionID(mount *MOUNT) (string, int, error) {
 	// Asignar una letra a la partición y obtener el índice
 	letter, partitionCorrelative, err := utils.GetLetterAndPartitionCorrelative(mount.path)
 	if err != nil {
-		fmt.Println("Error obteniendo la letra:", err)
+		//fmt.Println("Error obteniendo la letra:", err)
 		return "", 0, err
 	}
 

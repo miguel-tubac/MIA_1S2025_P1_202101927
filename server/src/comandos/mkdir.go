@@ -98,61 +98,21 @@ func createDirectory(mkdir *MKDIR, sb *structures.SuperBlock, partitionPath stri
 	parentDirs, destDir := utils.GetParentDirectories(mkdir.path)
 	// fmt.Println("\nDirectorios padres:", parentDirs)
 	// fmt.Println("Directorio destino:", destDir)
-	validacion := true
-	// fmt.Println(mkdir.p)
-	if mkdir.p {
-		//Directorios padres: parentsDir == [home user docs]
-		//Directorio destino: destDir = usac
-		parentDirs = append(parentDirs, destDir)
-		//fmt.Println(len(parentDirs))
-		var nuevo []string
 
-		// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
-		for i := 0; i < len(parentDirs); i++ {
-			destDir = parentDirs[i]
+	// Crear el directorio segun el path proporcionado
+	err := sb.CreateFolder(mkdir.p, partitionPath, parentDirs, destDir)
+	if err != nil {
+		return fmt.Errorf("error al crear el directorio: %w", err)
+	}
 
-			// Asegurar que nuevo no se modifique dentro de CreateFolder
-			tempNuevo := append([]string{}, nuevo...)
+	// Imprimir inodos y bloques
+	// sb.PrintInodes(partitionPath)
+	// sb.PrintBlocks(partitionPath)
 
-			// Crear el directorio segun el path proporcionado
-			err := sb.CreateFolder(partitionPath, tempNuevo, destDir, &validacion)
-			if err != nil {
-				return fmt.Errorf("error al crear el directorio: %w", err)
-			}
-
-			// Serializar el superbloque
-			err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
-			if err != nil {
-				return fmt.Errorf("error al serializar el superbloque: %w", err)
-			}
-
-			// fmt.Println("********agregado***********")
-			// fmt.Println(nuevo)
-			// fmt.Println(destDir)
-			nuevo = append(nuevo, destDir)
-		}
-		//Aca es cuando el parametro -p no se especifica
-	} else {
-		// Crear el directorio segun el path proporcionado
-		err := sb.CreateFolder(partitionPath, parentDirs, destDir, &validacion)
-		if err != nil {
-			return fmt.Errorf("error al crear el directorio: %w", err)
-		}
-
-		if validacion {
-			return errors.New("no existe la carpeta padres")
-		}
-
-		// Imprimir inodos y bloques
-		// sb.PrintInodes(partitionPath)
-		// sb.PrintBlocks(partitionPath)
-
-		// Serializar el superbloque
-		err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
-		if err != nil {
-			return fmt.Errorf("error al serializar el superbloque: %w", err)
-		}
-
+	// Serializar el superbloque
+	err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
+	if err != nil {
+		return fmt.Errorf("error al serializar el superbloque: %w", err)
 	}
 
 	return nil

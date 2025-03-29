@@ -2,6 +2,7 @@ package main
 
 import (
 	"bakend/src/analyzer"
+	"bakend/src/utils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,6 +10,9 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	stores "bakend/src/almacenamiento"
+	comandos "bakend/src/comandos"
 )
 
 type RequestData struct {
@@ -34,11 +38,11 @@ func interpretarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//********************* Esta parte es para no parar el bakend y volver a reiniciarlo***************
-	// //Se reinicia la lista de los id´s montados
-	// stores.ClearMountedPartitions()
-	// utils.ResetMapsAndIndex()
-	// //Se reinicia el login
-	// comandos.SetearLogin()
+	//Se reinicia la lista de los id´s montados
+	stores.ClearMountedPartitions()
+	utils.ResetMapsAndIndex()
+	//Se reinicia el login
+	comandos.SetearLogin()
 	//************************** fin ******************************************************************
 
 	//fmt.Println(requestData.Entrada)

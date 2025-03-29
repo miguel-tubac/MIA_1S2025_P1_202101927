@@ -163,7 +163,7 @@ func RmuserComand(path string, login *LOGIN, comando *RMUSR, inodeIndex int32, s
 					}
 					encontrado = true
 					//Se edita el id del grupo
-					result += "0," + tipo + "," + grupo + "," + usuario + "," + password //+ "\n"
+					result += "0," + tipo + "," + grupo + "," + usuario + "," + password + "\n"
 					//Continua por si hay mas datos y se agregan al contenido del fileblock
 					continue
 				}

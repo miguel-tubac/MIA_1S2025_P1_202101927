@@ -3,7 +3,6 @@ package analyzer
 import (
 	stores "bakend/src/almacenamiento"
 	structures "bakend/src/estructuras"
-	utils "bakend/src/utils"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -121,95 +120,95 @@ func commandMkfile(mkfile *MKFILE) error {
 func createFile(mkfile *MKFILE, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.PARTITION) error {
 	//fmt.Println("\nCreando directorio y archivo:", mkfile.path)
 
-	// GetParentDirectories obtiene las carpetas padres y el directorio de destino
-	parentDirs, nombreArchivo := utils.GetParentDirectories(mkfile.path)
-	// fmt.Println("Directorios padres:", parentDirs)
-	// fmt.Println("Nombre archivo:", nombreArchivo)
+	// // GetParentDirectories obtiene las carpetas padres y el directorio de destino
+	// parentDirs, nombreArchivo := utils.GetParentDirectories(mkfile.path)
+	// // fmt.Println("Directorios padres:", parentDirs)
+	// // fmt.Println("Nombre archivo:", nombreArchivo)
 
-	//Aca se deben de crear las carpetas padres
-	if mkfile.r {
-		//Aca se iran agregando las carpetas
-		destDir := ""
-		var nuevo []string
-		//Esta validacion no se avalua
-		validacion := true
-		// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
-		for i := 0; i < len(parentDirs); i++ {
-			destDir = parentDirs[i]
+	// //Aca se deben de crear las carpetas padres
+	// if mkfile.r {
+	// 	//Aca se iran agregando las carpetas
+	// 	destDir := ""
+	// 	var nuevo []string
+	// 	//Esta validacion no se avalua
+	// 	validacion := true
+	// 	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	// 	for i := 0; i < len(parentDirs); i++ {
+	// 		destDir = parentDirs[i]
 
-			// Asegurar que nuevo no se modifique dentro de CreateFolder
-			tempNuevo := append([]string{}, nuevo...)
+	// 		// Asegurar que nuevo no se modifique dentro de CreateFolder
+	// 		tempNuevo := append([]string{}, nuevo...)
 
-			// Crear el directorio segun el path proporcionado
-			err := sb.CreateFolder(partitionPath, tempNuevo, destDir, &validacion)
-			if err != nil {
-				return fmt.Errorf("error al crear el directorio: %w", err)
-			}
+	// 		// Crear el directorio segun el path proporcionado
+	// 		err := sb.CreateFolder(partitionPath, tempNuevo, destDir, &validacion)
+	// 		if err != nil {
+	// 			return fmt.Errorf("error al crear el directorio: %w", err)
+	// 		}
 
-			// Serializar el superbloque
-			err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
-			if err != nil {
-				return fmt.Errorf("error al serializar el superbloque: %w", err)
-			}
+	// 		// Serializar el superbloque
+	// 		err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
+	// 		if err != nil {
+	// 			return fmt.Errorf("error al serializar el superbloque: %w", err)
+	// 		}
 
-			// fmt.Println("********agregado***********")
-			// fmt.Println(nuevo)
-			// fmt.Println(destDir)
-			nuevo = append(nuevo, destDir)
-		}
+	// 		// fmt.Println("********agregado***********")
+	// 		// fmt.Println(nuevo)
+	// 		// fmt.Println(destDir)
+	// 		nuevo = append(nuevo, destDir)
+	// 	}
 
-		//Aca se valida si no esta la ruta creada
-	} else {
-		// aca unicamente se valida si la ruta esta creada
-		valida := true
-		//Crea una copia para no editar el areglo riginal
-		copia := make([]string, len(parentDirs)) // Crear un slice con el mismo tamaño
-		copy(copia, parentDirs)                  // Copiar los elementos
-		//fmt.Println("---------------------")
-		// fmt.Println(copia)
-		// fmt.Println(nombreArchivo)
-		//fmt.Println(sb.S_inodes_count)
-		//Anaaliza el destino
-		errr := sb.ComprovarFolder(partitionPath, copia, nombreArchivo, &valida)
-		if errr != nil {
-			//aca se genero un error
-			return fmt.Errorf("error al comprovar si existe la ruta: %w", errr)
-		}
+	// 	//Aca se valida si no esta la ruta creada
+	// } else {
+	// 	// aca unicamente se valida si la ruta esta creada
+	// 	valida := true
+	// 	//Crea una copia para no editar el areglo riginal
+	// 	copia := make([]string, len(parentDirs)) // Crear un slice con el mismo tamaño
+	// 	copy(copia, parentDirs)                  // Copiar los elementos
+	// 	//fmt.Println("---------------------")
+	// 	// fmt.Println(copia)
+	// 	// fmt.Println(nombreArchivo)
+	// 	//fmt.Println(sb.S_inodes_count)
+	// 	//Anaaliza el destino
+	// 	errr := sb.ComprovarFolder(partitionPath, copia, nombreArchivo, &valida)
+	// 	if errr != nil {
+	// 		//aca se genero un error
+	// 		return fmt.Errorf("error al comprovar si existe la ruta: %w", errr)
+	// 	}
 
-		//La funcion cambia a false y por lo tanto no deberia entrar
-		//Si no cambia a false es porque no lo encontro
-		if valida {
-			return errors.New("no existe la carpeta padres")
-		}
-	}
+	// 	//La funcion cambia a false y por lo tanto no deberia entrar
+	// 	//Si no cambia a false es porque no lo encontro
+	// 	if valida {
+	// 		return errors.New("no existe la carpeta padres")
+	// 	}
+	// }
 
-	contenido := ""
-	//Aca se debe de copiar el contenido del archivo al nuevo archivo
-	//Se debe de ir a buscar a mis archivos
-	if mkfile.cont != "" {
-		informacion, err := LeerArchivo(mkfile.cont)
-		if err != nil {
-			return fmt.Errorf("error al leer el archivo: %w", err)
-		}
-		//Se le agrega la informacion del archivo al contenido
-		contenido += informacion
+	// contenido := ""
+	// //Aca se debe de copiar el contenido del archivo al nuevo archivo
+	// //Se debe de ir a buscar a mis archivos
+	// if mkfile.cont != "" {
+	// 	informacion, err := LeerArchivo(mkfile.cont)
+	// 	if err != nil {
+	// 		return fmt.Errorf("error al leer el archivo: %w", err)
+	// 	}
+	// 	//Se le agrega la informacion del archivo al contenido
+	// 	contenido += informacion
 
-		//Aca se debe de generar el contenido del nuevo archivo, el cual debe ser numeros 0-9
-	} else if mkfile.size > 0 {
-		//Aca se genera la cadena numerica
-		contenido += GenerarCadenaNumerica(mkfile.size)
-	}
+	// 	//Aca se debe de generar el contenido del nuevo archivo, el cual debe ser numeros 0-9
+	// } else if mkfile.size > 0 {
+	// 	//Aca se genera la cadena numerica
+	// 	contenido += GenerarCadenaNumerica(mkfile.size)
+	// }
 
-	//Aca ya se debe de generar el archivo en el disco virtual con el -path
-	err := sb.CreateFile(partitionPath, parentDirs, nombreArchivo, contenido)
-	if err != nil {
-		return fmt.Errorf("error al crear el archivo: %w", err)
-	}
-	// Serializar el superbloque
-	err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
-	if err != nil {
-		return fmt.Errorf("error al serializar el superbloque: %w", err)
-	}
+	// //Aca ya se debe de generar el archivo en el disco virtual con el -path
+	// err := sb.CreateFile(partitionPath, parentDirs, nombreArchivo, contenido)
+	// if err != nil {
+	// 	return fmt.Errorf("error al crear el archivo: %w", err)
+	// }
+	// // Serializar el superbloque
+	// err = sb.Serialize(partitionPath, int64(mountedPartition.Part_start))
+	// if err != nil {
+	// 	return fmt.Errorf("error al serializar el superbloque: %w", err)
+	// }
 
 	return nil
 }

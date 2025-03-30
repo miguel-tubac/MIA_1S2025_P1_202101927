@@ -9,14 +9,6 @@ digraph G {
 	<tr><td>..</td><td>0</td></tr>
 	<tr><td>users.txt</td><td>1</td></tr>
 	<tr><td>home</td><td>2</td></tr>	</table>>];
-bloque8 [label=<
-							<table border="0" cellborder="1" cellspacing="0">
-							<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 8 </font></td></tr>
-	<tr><td>b_name</td><td>b_inodo</td></tr>
-	<tr><td>.</td><td>0</td></tr>
-	<tr><td>..</td><td>0</td></tr>
-	<tr><td>miguel</td><td>8</td></tr>
-	<tr><td>-</td><td>-1</td></tr>	</table>>];
 bloque1 [label=<
 					<table border="0" cellborder="1" cellspacing="0">
 		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
@@ -49,11 +41,19 @@ bloque6 [label=<
 	<tr><td>..</td><td>2</td></tr>
 	<tr><td>docs</td><td>4</td></tr>
 	<tr><td>-</td><td>-1</td></tr>	</table>>];
-bloque0 -> bloque8
-bloque8 -> bloque1
+bloque7 [label=<
+							<table border="0" cellborder="1" cellspacing="0">
+							<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> REPORTE BLOQUE 7 </font></td></tr>
+	<tr><td>b_name</td><td>b_inodo</td></tr>
+	<tr><td>.</td><td>4</td></tr>
+	<tr><td>..</td><td>3</td></tr>
+	<tr><td>usac</td><td>5</td></tr>
+	<tr><td>-</td><td>-1</td></tr>	</table>>];
+bloque0 -> bloque1
 bloque1 -> bloque2
 bloque2 -> bloque3
 bloque3 -> bloque4
 bloque4 -> bloque5
 bloque5 -> bloque6
+bloque6 -> bloque7
 }

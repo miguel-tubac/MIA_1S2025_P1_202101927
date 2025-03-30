@@ -230,7 +230,7 @@ func (sb *SuperBlock) CreateFolder(crear_padres bool, path string, parentsDir []
 	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
 	if len(parentsDir) == 0 {
 		// enviamos a buscar el directorio a crear, para saber si existe
-		next_inode, err := sb.Encontrar_Directorio(path, 0, destDir)
+		next_inode, err := sb.Encontrar_Directorio(path, 0, destDir, [1]byte{'1'})
 		// si hay un error, lo devolvemos
 		if err != nil {
 			return err
@@ -251,9 +251,11 @@ func (sb *SuperBlock) CreateFolder(crear_padres bool, path string, parentsDir []
 
 	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
 	Posicion := int32(0)
+	//Se le agrega el ultimo, que es el final
+	parentsDir = append(parentsDir, destDir)
 	for i := 0; i < len(parentsDir); i++ {
 		// enviamos a buscar el directorio en la posicion i, para saber si existe
-		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i])
+		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i], [1]byte{'1'})
 		// si hay un error, lo devolvemos
 		if err != nil {
 			return err
@@ -290,8 +292,76 @@ func (sb *SuperBlock) CreateFolder(crear_padres bool, path string, parentsDir []
 	return nil
 }
 
+// CreateFile crea una archivo en el sistema de archivos
+func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []string, nombreArchivo string, contenido string) error {
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		// enviamos a buscar el directorio a crear, para saber si existe
+		next_inode, err := sb.Encontrar_Directorio(path, 0, nombreArchivo, [1]byte{'0'})
+		// si hay un error, lo devolvemos
+		if err != nil {
+			return err
+		}
+		// si el valor de la variable es un -1, significa que el directorio no existe, por ende, hay que crearlo
+		if next_inode == int32(-1) {
+			//Aca se genera el indo y el fileblock
+			err := sb.createFileInInode(path, 0, nombreArchivo, contenido)
+
+			if err != nil {
+				return err
+			}
+
+		}
+
+		return nil
+		//return sb.createFileInInode(path, 0, parentsDir, nombreArchivo, contenido)
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	Posicion := int32(0)
+	//Se le agrega el ultimo, que es el final, '1'
+	parentsDir = append(parentsDir, nombreArchivo)
+	for i := 0; i < len(parentsDir); i++ {
+		// enviamos a buscar el directorio en la posicion i, para saber si existe
+		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i], [1]byte{'0'})
+		// si hay un error, lo devolvemos
+		if err != nil {
+			return err
+		}
+
+		//fmt.Println("VALOR NEXT_INODE: ", next_inode)
+
+		// si el valor de la variable es un -1, significa que el directorio no existe, por ende, hay que crearlo
+		if next_inode == int32(-1) {
+			if crear_padres {
+				err := sb.createFileInInode(path, Posicion, parentsDir[i], contenido)
+
+				if err != nil {
+					return err
+				}
+
+				/*
+					ya que creamos una carpeta (inode) y es el inmediato siguiente al que teniamos, simplemente sumamos 1 a Inode_destino y mantenemos la continuidad
+				*/
+				Posicion = sb.S_inodes_count - 1
+
+			} else {
+				return errors.New("error los directorios padres de la ruta no existe")
+			}
+		} else {
+			/*
+				si no devuelve un -1, significa que encontro el inode de la siguiente carpeta, por ende se lo asignamos a Inode_destino y mantenemos la continuidad
+			*/
+			Posicion = next_inode
+		}
+	}
+
+	return nil
+}
+
 // Esta funcion para buscar el directorio en donde se debe de crear el fileblok
-func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDir string) (int32, error) {
+func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDir string, tipo [1]byte) (int32, error) {
 	// Crear un nuevo inodo
 	inode := &Inode{}
 	// Deserializar el inodo
@@ -301,8 +371,9 @@ func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDi
 	}
 	// Verificar si el inodo es de tipo carpeta
 	//fmt.Println(inodeIndex)
-	if inode.I_type[0] == '1' {
-		// fmt.Println("aqui miguel")
+	if inode.I_type[0] == tipo[0] {
+		fmt.Println(inode.I_type[0])
+		fmt.Println(tipo[0])
 		return int32(-1), errors.New("error los directorios de la ruta es un archivo")
 	}
 
@@ -345,8 +416,8 @@ func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDi
 			contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
 			// Convertir parentDir a string y eliminar los caracteres nulos
 			parentDirName := strings.Trim(destDir, "\x00 ")
-			fmt.Println(contentName)
-			fmt.Println(parentDirName)
+			// fmt.Println(contentName)
+			// fmt.Println(parentDirName)
 			// Si el nombre del contenido coincide con el nombre de la carpeta padre
 			if strings.EqualFold(contentName, parentDirName) {
 				return int32(content.B_inodo), nil
@@ -357,25 +428,6 @@ func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDi
 
 	}
 	return int32(-1), nil
-}
-
-// CreateFile crea una archivo en el sistema de archivos
-func (sb *SuperBlock) CreateFile(path string, parentsDir []string, nombreArchivo string, contenido string) error {
-	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
-	if len(parentsDir) == 0 {
-		return sb.createFileInInode(path, 0, parentsDir, nombreArchivo, contenido)
-	}
-
-	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
-	for i := int32(0); i < sb.S_inodes_count; i++ {
-		err := sb.createFileInInode(path, i, parentsDir, nombreArchivo, contenido)
-		if err != nil {
-			return err
-		}
-		//fmt.Println(parentsDir)
-	}
-
-	return nil
 }
 
 // CreateFolder crea una carpeta en el sistema de archivos

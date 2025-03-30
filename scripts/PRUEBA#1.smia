@@ -48,6 +48,8 @@ rmgrp -name=usuarios5
 #------Crea usuario user1 en el grupo usuarios
 mkusr -user=user1 -pass=usuario -grp=usuarios
 mkusr -user=user12 -pass=usuario -grp=usuarios
+mkusr -user=user33 -pass=usuario -grp=usuarios
+mkusr -user=user44 -pass=usuario -grp=usuarios
 
 #------Elimina el usuario user1
 rmusr -user=user1
@@ -57,13 +59,15 @@ chgrp -user=user12 -grp=usuarios4
 
 #------Crea los archivos 
 mkfile -size=15 -path=/home/a.txt -r
+mkfile -size=15 -path=/home/b.txt -r
+mkfile -size=15 -path=/home/c.txt -r
 #mkfile -size=15 -path=/home/user/docs/a.txt -r -cont=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/archivos_cont/prueba.txt
 #mkfile -size=15 -path=/home/user/docs/a.txt -r
 #mkfile -path="/home/mis document/archivo 1.txt" -r
 
 #------Crea la carpeta usac, si no existen las carpetas home user o docs se crean
 #mkdir -p -path=/home/user/docs/usac
-#mkdir -path="/home"
+#mkdir -path="/miguel"
 #mkdir -path="/home/usac"
 #mkdir -path="/home/work"
 #mkdir -path="/home/usac/mia"
@@ -72,16 +76,16 @@ mkfile -size=15 -path=/home/a.txt -r
 #------Comando Cat
 #cat -file1=/home/user/docs/a.txt
 #cat -file1="/home/a.txt" -file2="/home/b.txt" -file3="/home/c.txt"
-cat -file1=/users.txt -file1=/home/a.txt
+#cat -file1=/users.txt -file1=/home/a.txt
 
 #------Reporte: INODO Disco1.mia
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/inodo.jpg -name=inode
 
+#------Reporte: bloques  (Carpetas y Archivos)
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/block.jpg -name=block
+
 #------Reporte: MBR y EBR Disco1.mia
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/mbryebr.jpg -name=mbr
-
-#------Reporte: bloques  (Carpetas y Archivos)
-#rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/block.jpg -name=block
 
 #------Reporte: bitmap de inodos
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/bm_inode.txt -name=bm_inode

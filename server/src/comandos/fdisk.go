@@ -213,7 +213,7 @@ func createPrimaryPartition(fdisk *FDISK, sizeBytes int) error {
 	}
 
 	//Se comprueba si existe otra particion con el mismo nombre
-	if mbr.ExisteNombre(fdisk.name) && availablePartition != nil && startPartition != -1 {
+	if mbr.ExisteNombre(fdisk.name) && startPartition != -1 {
 		var corre = mbr.GetCorrelativo()
 
 		// Crear la partición con los parámetros proporcionados
@@ -272,7 +272,7 @@ func createExtendidaPartition(fdisk *FDISK, sizeBytes int) error {
 	}
 
 	// Se comprueba si existe otra particion con el mismo nombre
-	if mbr.ExisteNombre(fdisk.name) && availablePartition != nil && startPartition != -1 && !validacion_extendida {
+	if mbr.ExisteNombre(fdisk.name) && startPartition != -1 && !validacion_extendida {
 		//OBtiene el correlativo
 		var corre = mbr.GetCorrelativo()
 

@@ -230,7 +230,7 @@ func (sb *SuperBlock) CreateFolder(crear_padres bool, path string, parentsDir []
 	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
 	if len(parentsDir) == 0 {
 		// enviamos a buscar el directorio a crear, para saber si existe
-		next_inode, err := sb.Encontrar_Directorio(path, 0, destDir, [1]byte{'1'})
+		next_inode, err := sb.Encontrar_Directorio(path, 0, destDir)
 		// si hay un error, lo devolvemos
 		if err != nil {
 			return err
@@ -255,7 +255,7 @@ func (sb *SuperBlock) CreateFolder(crear_padres bool, path string, parentsDir []
 	parentsDir = append(parentsDir, destDir)
 	for i := 0; i < len(parentsDir); i++ {
 		// enviamos a buscar el directorio en la posicion i, para saber si existe
-		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i], [1]byte{'1'})
+		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i])
 		// si hay un error, lo devolvemos
 		if err != nil {
 			return err
@@ -297,7 +297,7 @@ func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []st
 	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
 	if len(parentsDir) == 0 {
 		// enviamos a buscar el directorio a crear, para saber si existe
-		next_inode, err := sb.Encontrar_Directorio(path, 0, nombreArchivo, [1]byte{'0'})
+		next_inode, err := sb.Encontrar_Directorio(path, 0, nombreArchivo)
 		// si hay un error, lo devolvemos
 		if err != nil {
 			return err
@@ -321,10 +321,10 @@ func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []st
 	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
 	Posicion := int32(0)
 	//Se le agrega el ultimo, que es el final, '1'
-	parentsDir = append(parentsDir, nombreArchivo)
+	//parentsDir = append(parentsDir, nombreArchivo) //TODO: aca creo que es el problema como se le agrega el archivo
 	for i := 0; i < len(parentsDir); i++ {
 		// enviamos a buscar el directorio en la posicion i, para saber si existe
-		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i], [1]byte{'0'})
+		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i])
 		// si hay un error, lo devolvemos
 		if err != nil {
 			return err
@@ -335,7 +335,7 @@ func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []st
 		// si el valor de la variable es un -1, significa que el directorio no existe, por ende, hay que crearlo
 		if next_inode == int32(-1) {
 			if crear_padres {
-				err := sb.createFileInInode(path, Posicion, parentsDir[i], contenido)
+				err := sb.createFolderInInode(path, Posicion, parentsDir[i])
 
 				if err != nil {
 					return err
@@ -357,11 +357,18 @@ func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []st
 		}
 	}
 
+	// si el nombre del directorio termina con .txt entonces es un archivo
+	err := sb.createFileInInode(path, Posicion, nombreArchivo, contenido)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // Esta funcion para buscar el directorio en donde se debe de crear el fileblok
-func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDir string, tipo [1]byte) (int32, error) {
+func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDir string) (int32, error) {
 	// Crear un nuevo inodo
 	inode := &Inode{}
 	// Deserializar el inodo
@@ -371,9 +378,9 @@ func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDi
 	}
 	// Verificar si el inodo es de tipo carpeta
 	//fmt.Println(inodeIndex)
-	if inode.I_type[0] == tipo[0] {
-		fmt.Println(inode.I_type[0])
-		fmt.Println(tipo[0])
+	if inode.I_type[0] == '1' {
+		// fmt.Println(inode.I_type[0])
+		// fmt.Println(tipo[0])
 		return int32(-1), errors.New("error los directorios de la ruta es un archivo")
 	}
 

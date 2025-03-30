@@ -47,8 +47,20 @@ bloque7 [label=<
 	<tr><td>b_name</td><td>b_inodo</td></tr>
 	<tr><td>.</td><td>4</td></tr>
 	<tr><td>..</td><td>3</td></tr>
-	<tr><td>usac</td><td>5</td></tr>
+	<tr><td>nuevo.txt</td><td>5</td></tr>
 	<tr><td>-</td><td>-1</td></tr>	</table>>];
+bloque8 [label=<
+					<table border="0" cellborder="1" cellspacing="0">
+		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
+		<tr><td colspan="2"> 9876543210123847192384791823749813274983274892173487398247893274 </td></tr>	</table>>];
+bloque9 [label=<
+					<table border="0" cellborder="1" cellspacing="0">
+		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
+		<tr><td colspan="2"> 839274983247982374983247932847983<br/>2749812374891237438miguelaasdh </td></tr>	</table>>];
+bloque10 [label=<
+					<table border="0" cellborder="1" cellspacing="0">
+		<tr><td colspan="2" bgcolor="#0000FF"><font color="white"> BLOQUE ARCHIVO </font></td></tr>
+		<tr><td colspan="2"> f akdjhfkas <br/>dkajdhfka sdfjkasd fkjsdahfk asdjhfjksajdhf </td></tr>	</table>>];
 bloque0 -> bloque1
 bloque1 -> bloque2
 bloque2 -> bloque3
@@ -56,4 +68,7 @@ bloque3 -> bloque4
 bloque4 -> bloque5
 bloque5 -> bloque6
 bloque6 -> bloque7
+bloque7 -> bloque8
+bloque8 -> bloque9
+bloque9 -> bloque10
 }

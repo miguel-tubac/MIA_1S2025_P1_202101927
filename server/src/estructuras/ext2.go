@@ -512,9 +512,9 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, nombreArc
 				tamano := 64
 				contador := 0
 				// Recorrer el string en segmentos de 64 caracteres
-				for i := 0; i < len(contenido); i += tamano {
+				for ii := 0; ii < len(contenido); ii += tamano {
 					//fmt.Println("******************")
-					fin := i + tamano
+					fin := ii + tamano
 					if fin > len(contenido) {
 						fin = len(contenido) // Evitar desbordamiento
 					}
@@ -542,7 +542,7 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, nombreArc
 						return err
 					}
 
-					parte := contenido[i:fin]
+					parte := contenido[ii:fin]
 					// Creamos el bloque de users.txt
 					usersBlock := &FileBlock{
 						B_content: [64]byte{},
@@ -674,9 +674,9 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, nombreArc
 				tamano := 64
 				contador := 0
 				// Recorrer el string en segmentos de 64 caracteres
-				for i := 0; i < len(contenido); i += tamano {
+				for iii := 0; iii < len(contenido); iii += tamano {
 					//fmt.Println("******************")
-					fin := i + tamano
+					fin := iii + tamano
 					if fin > len(contenido) {
 						fin = len(contenido) // Evitar desbordamiento
 					}
@@ -704,7 +704,7 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, nombreArc
 						return err
 					}
 
-					parte := contenido[i:fin]
+					parte := contenido[iii:fin]
 					// Creamos el bloque de users.txt
 					usersBlock := &FileBlock{
 						B_content: [64]byte{},

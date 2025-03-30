@@ -60,9 +60,9 @@ func ParseRep(tokens []string) (*REP, error) {
 			//Convertimos todo a minuscula
 			value = strings.ToLower(value)
 			// Verifica que el nombre sea uno de los valores permitidos
-			validNames := []string{"mbr", "disk", "inode", "block", "bm_inode", "bm_bloc", "sb", "file", "ls"}
+			validNames := []string{"mbr", "disk", "inode", "block", "bm_inode", "bm_block", "sb", "file", "ls"}
 			if !contains(validNames, value) {
-				return nil, errors.New("nombre inválido, debe ser uno de los siguientes: mbr, disk, inode, block, bm_inode, bm_bloc, sb, file, ls")
+				return nil, errors.New("nombre inválido, debe ser uno de los siguientes: mbr, disk, inode, block, bm_inode, bm_block, sb, file, ls")
 			}
 			cmd.name = value
 		case "-path_file_ls":
@@ -148,7 +148,7 @@ func commandRep(rep *REP) error {
 		}
 		//Rerornamos el mensaje de satisfacion
 		return fmt.Errorf("reporte (txt) del BM_INODE generado: %s", rep.path)
-	case "bm_bloc":
+	case "bm_block":
 		err = reports.ReportBMBloc(mountedSb, mountedDiskPath, rep.path)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)

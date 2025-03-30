@@ -330,8 +330,6 @@ func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []st
 			return err
 		}
 
-		//fmt.Println("VALOR NEXT_INODE: ", next_inode)
-
 		// si el valor de la variable es un -1, significa que el directorio no existe, por ende, hay que crearlo
 		if next_inode == int32(-1) {
 			if crear_padres {
@@ -347,7 +345,7 @@ func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []st
 				Posicion = sb.S_inodes_count - 1
 
 			} else {
-				return errors.New("error los directorios padres de la ruta no existe")
+				return errors.New("error los directorios padres de la ruta para el file no existe")
 			}
 		} else {
 			/*
@@ -423,10 +421,12 @@ func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDi
 			contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
 			// Convertir parentDir a string y eliminar los caracteres nulos
 			parentDirName := strings.Trim(destDir, "\x00 ")
+			// fmt.Println("****************Commparacion***********************")
 			// fmt.Println(contentName)
 			// fmt.Println(parentDirName)
 			// Si el nombre del contenido coincide con el nombre de la carpeta padre
 			if strings.EqualFold(contentName, parentDirName) {
+				//fmt.Println("****************ADA***********************")
 				return int32(content.B_inodo), nil
 				//return nil
 			}
@@ -434,6 +434,7 @@ func (sb *SuperBlock) Encontrar_Directorio(path string, inodeIndex int32, destDi
 		}
 
 	}
+	//fmt.Println("*************NO SE ENCONTRO***********************")
 	return int32(-1), nil
 }
 

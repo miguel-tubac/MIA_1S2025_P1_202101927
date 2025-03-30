@@ -842,6 +842,8 @@ func (sb *SuperBlock) getContenidoFile(path string, inodeIndex int32, parentsDir
 
 				//Comprovamos que sea el mismo archivo
 				contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
+				// fmt.Println(contentName)
+				// fmt.Println(destDir)
 				if contentName == destDir {
 					//Aca se obtiene el inodo:
 					inode2 := &Inode{}
@@ -871,6 +873,7 @@ func (sb *SuperBlock) getContenidoFile(path string, inodeIndex int32, parentsDir
 
 						contenido += strings.Trim(string(filebloque.B_content[:]), "\x00 ")
 						// fmt.Println("****************contenido******************")
+						// fmt.Println(contenido)
 						// filebloque.Print()
 					}
 					//fmt.Println(contenido)
@@ -878,7 +881,7 @@ func (sb *SuperBlock) getContenidoFile(path string, inodeIndex int32, parentsDir
 					return contenido, nil
 				}
 
-				return "", nil
+				//return "", nil
 			}
 		}
 

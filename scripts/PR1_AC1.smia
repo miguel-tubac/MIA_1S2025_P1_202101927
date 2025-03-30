@@ -244,8 +244,8 @@ login -user=user1 -pass=abc -id=271A
 
 
 #-----------------14. MKFILE-----------------
-mkfile -path=/home/archivos/user/docs/Tarea.txt -size=75
-mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=768
+mkfile -path=/home/archivos/user/docs/Tarea.txt -size=75 -r
+mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=768 -r
 
 
 #Para este comando hay que crear un archivo en la computadora y en cont poner su primer nombre
@@ -279,9 +279,9 @@ rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r2_block.jpg" -name
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r3_bm_inode.txt" -name=bm_inode
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r4_bm_block.txt" -name=bm_block
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r5_sb.jpg" -name=sb
-rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r6_file.jpg" -path_file_ls=/home/archivos/user/docs/Tarea2.txt  -name=file
-rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r7_ls.jpg" -path_file_ls=/home/archivos/user/docs -name=ls
-rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r8_tree.png" -name=tree
+rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r6_file.txt" -path_file_ls=/home/archivos/user/docs/Tarea2.txt  -name=file
+#rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r7_ls.jpg" -path_file_ls=/home/archivos/user/docs -name=ls
+#rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r8_tree.png" -name=tree
 
 
 #------------------------8. LOGOUT------------------------

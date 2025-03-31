@@ -318,7 +318,6 @@ func (sb *SuperBlock) CreateFile(crear_padres bool, path string, parentsDir []st
 	}
 
 	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
-	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
 	Posicion := int32(0)
 	//Se le agrega el ultimo, que es el final, '1'
 	//parentsDir = append(parentsDir, nombreArchivo) //TODO: aca creo que es el problema como se le agrega el archivo
@@ -459,4 +458,57 @@ func (sb *SuperBlock) GetFileContent(path string, parentsDir []string, destDir s
 	//sb.Print()
 
 	return "", nil
+}
+
+// Esta funcion es para el reporte del ls, el cual retorna codigo de tipo .dot
+func (sb *SuperBlock) ObtenerDotLS(path string, parentsDir []string, destDir string) (string, error) {
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		// enviamos a buscar el directorio a crear, para saber si existe
+		next_inode, err := sb.Encontrar_Directorio(path, 0, destDir)
+		// si hay un error, lo devolvemos
+		if err != nil {
+			return "", err
+		}
+		// si el valor de la variable es un -1, significa que el directorio no existe, por ende, hay que crearlo
+		if next_inode == int32(-1) {
+			//fmt.Println("Aca si")
+			//Aca se genera el indo y el fileblock
+			cadena, err := sb.obtnerDot_LS(path, 0)
+
+			if err != nil {
+				return "", err
+			}
+			return cadena, nil
+		}
+		return "", nil
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	Posicion := int32(0)
+	//Se le agrega el ultimo, que es el final, '1'
+	parentsDir = append(parentsDir, destDir) //TODO: aca creo que es el problema como se le agrega el archivo
+	for i := 0; i < len(parentsDir); i++ {
+		// enviamos a buscar el directorio en la posicion i, para saber si existe
+		next_inode, err := sb.Encontrar_Directorio(path, Posicion, parentsDir[i])
+		// si hay un error, lo devolvemos
+		if err != nil {
+			return "", err
+		}
+
+		// si el valor de la variable es un -1, significa que el directorio no existe, por ende, hay que crearlo
+		if next_inode == int32(-1) {
+			Posicion = sb.S_inodes_count - 1
+		} else {
+			Posicion = next_inode
+		}
+	}
+
+	cadena, err := sb.obtnerDot_LS(path, Posicion)
+
+	if err != nil {
+		return "", err
+	}
+
+	return cadena, nil
 }

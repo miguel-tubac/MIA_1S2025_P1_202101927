@@ -3,6 +3,7 @@ package structures
 import (
 	utils "bakend/src/utils"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -206,14 +207,14 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, destDir
 			// copiamos el nombre del archivo
 			copy(content_folder.B_name[:], []byte(destDir))
 
-			// Actualizar el bitmap de inodos
-			err = sb.UpdateBitmapBlock(path)
+			// serializar el bloque
+			err = new_folderblock.Serialize(path, int64(sb.S_first_blo))
 			if err != nil {
 				return err
 			}
 
-			// serializar el bloque
-			err = new_folderblock.Serialize(path, int64(sb.S_first_blo))
+			// Actualizar el bitmap de inodos
+			err = sb.UpdateBitmapBlock(path)
 			if err != nil {
 				return err
 			}
@@ -445,14 +446,14 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, nombreArc
 			// copiamos el nombre del archivo
 			copy(content_folder.B_name[:], []byte(nombreArchivo))
 
-			// actualizamos el bitmap de bloques
-			err = sb.UpdateBitmapBlock(path)
+			// serializar el bloque
+			err = new_folderblock.Serialize(path, int64(sb.S_first_blo))
 			if err != nil {
 				return err
 			}
 
-			// serializar el bloque
-			err = new_folderblock.Serialize(path, int64(sb.S_first_blo))
+			// actualizamos el bitmap de bloques
+			err = sb.UpdateBitmapBlock(path)
 			if err != nil {
 				return err
 			}
@@ -488,16 +489,16 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, nombreArc
 				I_perm:  [3]byte{'6', '6', '4'},
 			}
 
-			// Actualizar el bitmap de inodos
-			err = sb.UpdateBitmapInode(path)
-			if err != nil {
-				return err
-			}
-
 			//Guarda la posicion donde se serealizo el inodo
 			posicionInodo := int64(sb.S_first_ino)
 			// Serializar el inodo users.txt
 			err = new_Inode.Serialize(path, int64(sb.S_first_ino))
+			if err != nil {
+				return err
+			}
+
+			// Actualizar el bitmap de inodos
+			err = sb.UpdateBitmapInode(path)
 			if err != nil {
 				return err
 			}
@@ -887,4 +888,99 @@ func (sb *SuperBlock) getContenidoFile(path string, inodeIndex int32, parentsDir
 
 	}
 	return "", nil
+}
+
+// createFolderInInode crea una carpeta en un inodo específico
+func (sb *SuperBlock) obtnerDot_LS(path string, inodeIndex int32) (string, error) {
+	// Crear un nuevo inodo
+	inode := &Inode{}
+	// Deserializar el inodo
+	err := inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+	if err != nil {
+		return "", err
+	}
+
+	//Esta es la cadena donde se almacenara el resultado
+	cadenaDot := ""
+	//inode.Print()
+	// Iterar sobre cada bloque del inodo (apuntadores)
+	for i := 0; i < len(inode.I_block); i++ {
+		// Si el bloque no existe, se debe de parar
+		if inode.I_block[i] == -1 {
+			break
+		}
+
+		//De lo contrario continua con la creacion en la posicion dada
+		// Crear un nuevo bloque de carpeta
+		block := &FolderBlock{}
+
+		// Deserializar el bloque
+		err := block.Deserialize(path, int64(sb.S_block_start+(inode.I_block[i]*sb.S_block_size))) // 64 porque es el tamaño de un bloque
+		if err != nil {
+			return "", err
+		}
+
+		// Iterar sobre cada contenido del bloque, desde el index 2 porque los primeros dos son . y ..
+		for indexContent := 2; indexContent < len(block.B_content); indexContent++ {
+			// Obtener el contenido del bloque
+			content := block.B_content[indexContent]
+
+			// Si el apuntador al inodo está ocupado, continuar con el siguiente
+			if content.B_inodo == -1 {
+				continue
+			}
+
+			//fmt.Println(content.B_inodo)
+
+			//Ahora obtnego el inodo para la informacion
+			inode2 := &Inode{}
+			// Deserializar el inodo
+			err2 := inode2.Deserialize(path, int64(sb.S_inode_start+(content.B_inodo*sb.S_inode_size)))
+			if err2 != nil {
+				return "", err2
+			}
+
+			//Obtnermos los permisos
+			permisos := strings.Trim(string(inode2.I_perm[:]), "\x00 ")
+			//fmt.Printf("Permiso: %s", permisos)
+
+			//Mostramos el propietario
+			//fmt.Printf("Propietario: %d", inode2.I_uid)
+
+			//Mostramos el grupo propietario
+			//fmt.Printf("Grupo propietario: %d", inode2.I_gid)
+
+			//Mostramos la fecha de modificacion
+			mtime := time.Unix(int64(inode2.I_mtime), 0).Format(time.RFC3339)
+			//fmt.Printf("Fecha modificacion: %s", mtime)
+
+			//Mostramos el tipo
+			tipo := ""
+			if inode2.I_type == [1]byte{'1'} {
+				//fmt.Println("Archivo")
+				tipo = "Archivo"
+			} else {
+				//fmt.Println("Carpeta")
+				tipo = "Carpeta"
+				//inode2.Print()
+			}
+
+			//Mostramos la fecha de creacion
+			ctime := time.Unix(int64(inode2.I_ctime), 0).Format(time.RFC3339)
+			//fmt.Printf("Fecha de creacion: %s", ctime)
+
+			// Convertir B_name a string y eliminar los caracteres nulos
+			contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
+			//fmt.Printf("Nombre: %s", contentName)
+
+			cadenaDot += fmt.Sprintf(`
+			<tr>
+                <td>%s</td><td>%d</td><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
+            </tr>
+			`, permisos, inode2.I_uid, inode2.I_gid, mtime, tipo, ctime, contentName)
+		}
+
+	}
+
+	return cadenaDot, nil
 }

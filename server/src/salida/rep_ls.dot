@@ -1,0 +1,21 @@
+digraph G {
+		node [shape=plaintext]
+
+		tabla [
+        	label=<
+        	<table border="1" cellborder="1" cellspacing="0">
+			<tr>
+                <td>Permisos</td><td>Propietario</td><td>Grupo propietario</td><td>Fecha de modificación</td><td>Tipo</td><td>Fecha de creación</td>
+            </tr>
+		
+			<tr>
+                <td>777</td><td>1</td><td>1</td><td>2025-03-30T23:09:20-06:00</td><td>Archivo</td><td>2025-03-30T23:09:20-06:00</td><td>users.txt</td>
+            </tr>
+			
+			<tr>
+                <td>664</td><td>1</td><td>1</td><td>2025-03-30T23:09:20-06:00</td><td>Carpeta</td><td>2025-03-30T23:09:20-06:00</td><td>miguel</td>
+            </tr>
+			
+		</table>
+        >];
+	}

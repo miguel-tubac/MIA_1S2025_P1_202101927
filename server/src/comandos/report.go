@@ -180,6 +180,14 @@ func commandRep(rep *REP) error {
 		}
 		//Rerornamos el mensaje de satisfacion
 		return fmt.Errorf("reporte (txt) del file generado: %s", rep.path)
+	case "ls":
+		err = reports.ReporteLs(mountedSb, mountedDiskPath, rep.path, rep.path_file_ls)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		//Rerornamos el mensaje de satisfacion
+		return fmt.Errorf("imagen del LS generado: %s", rep.path)
 	}
 
 	return nil

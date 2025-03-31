@@ -67,7 +67,7 @@ mkfile -size=15 -path=/home/c.txt -r
 
 #------Crea la carpeta usac, si no existen las carpetas home user o docs se crean
 #mkdir -p -path=/home/user/docs/usac
-#mkdir -path="/miguel"
+mkdir -path="/miguel"
 #mkdir -path="/home/usac"
 #mkdir -path="/home/work"
 #mkdir -path="/home/usac/mia"
@@ -83,6 +83,9 @@ mkfile -size=15 -path=/home/c.txt -r
 
 #------Reporte: bloques  (Carpetas y Archivos)
 rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/block.jpg -name=block
+
+#------Reporte del la
+rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/rep_ls.jpg -path_file_ls=/ -name=ls
 
 #------Reporte: MBR y EBR Disco1.mia
 #rep -id=271A -path=/home/miguel/Descargas/Archivos/Laboratorio/Proyecto1/server/src/salida/mbryebr.jpg -name=mbr

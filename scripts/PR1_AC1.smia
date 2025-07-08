@@ -3,6 +3,7 @@
 #Cambiar "su_usuario" -> por el usuario de su distribución de linux  
 #Cambiar “34” -> por los ultimos dos digitos de su carnet  
 
+
 #----------------- 1. MKDISK  -----------------
 
 
@@ -240,12 +241,24 @@ logout #ERROR NO HAY SESION INICIADA
 
 
 #-----------------7. LOGIN-----------------
+#Validar un inicio de sesión para un usuario creado
 login -user=user1 -pass=abc -id=271A
+
+logout 
+
+#Regresamos al root 
+
+login -user=root -pass=123 -id=271A
+
+
+
+
+
 
 
 #-----------------14. MKFILE-----------------
 mkfile -path=/home/archivos/user/docs/Tarea.txt -size=75 -r
-mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=768 -r
+mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=768
 
 
 #Para este comando hay que crear un archivo en la computadora y en cont poner su primer nombre
@@ -253,25 +266,21 @@ mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=768 -r
 
 
 # Cambiar la ruta del cont por la del archivo NAME.txt que creo
-mkfile -path=/home/archivos/user/docs/Tarea3.txt -size=10 -cont=/home/miguel/Calificacion_MIA/CONT/NAME.txt
+mkfile -path=/home/archivos/user/docs/Tarea3.txt -size=10 -cont=/home/miguel/Calificacion_MIA/CONT/Miguel.txt
 
 
 #ERROR NO EXISTE RUTA
 mkfile -path="/home/archivos/noexiste/b1.txt"
 
-
 #ERROR NEGATIVO
 mkfile -path="/home/archivos/b1.txt" -size=-45
-
 
 #RECURSIVO
 mkfile -r -path=/home/archivos/user/docs/usac/archivos/proyectos/fase1/entrada.txt
 
-
 #-----------------6. CAT-----------------
 cat -file1=/home/archivos/user/docs/Tarea2.txt
 cat -file1=/home/archivos/user/docs/Tarea3.txt
-
 
 #------------------------REPORTES PARTE 4----------------
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r1_inode.jpg" -name=inode
@@ -279,7 +288,7 @@ rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r2_block.jpg" -name
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r3_bm_inode.txt" -name=bm_inode
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r4_bm_block.txt" -name=bm_block
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r5_sb.jpg" -name=sb
-rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r6_file.txt" -path_file_ls=/home/archivos/user/docs/Tarea2.txt  -name=file
+rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r6_file.jpg" -path_file_ls=/home/archivos/user/docs/Tarea2.txt  -name=file
 rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r7_ls.jpg" -path_file_ls=/home/archivos/user/docs -name=ls
 #rep -id=271A -path=/home/miguel/Calificacion_MIA/Reportes/p4_r8_tree.png" -name=tree
 
